@@ -18,25 +18,16 @@ int main() {
 
     bool exit = false;
     while(!std::cin.eof() && !exit){
-        std::cout << "> ";
-        std::string input;
-        getline(std::cin, input);
+        std::string clean_input;
+        int status = input_handler.readWord(clean_input);
 
-        if(input == "exit"){
-            exit = true;
-            continue;
-        }
-        else if(input == "display"){
-            b.print();
-            continue;
-        }
-        else if(input[2] != ' ' || input[4] != ' '){
-            std::cout << "Invalid input" << std::endl;
-            continue;
+        switch(status){
+            case -1: exit = true; continue;
+            case 1: b.print(); continue;
         }
 
-        char vertical_char = input[0], horizontal_char = input[1], orientation = input[3];
-        std::string word = input.substr(5);
+        char vertical_char = clean_input[0], horizontal_char = clean_input[1], orientation = clean_input[3];
+        std::string word = clean_input.substr(5);
         Word w{vertical_char, horizontal_char, orientation, word};
         if(!b.addWord(w)){
             std::cout << "Invalid word, please try again" << std::endl;

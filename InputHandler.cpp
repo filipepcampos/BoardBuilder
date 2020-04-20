@@ -3,16 +3,71 @@
 #include <limits>
 
 std::string InputHandler::readFileName() {
-    std::string filename;
-    std::cout << "Board file name: "; std::cin >> filename;
-    return filename;
+    std::string file_name;
+    bool valid;
+    do {
+        valid = true;
+        std::cout << "Board file name: "; getline(std::cin, file_name);
+        for(auto c : file_name){
+            if(c == ' '){
+                valid = false;
+                std::cout << "File name can't contain whitespace" << std::endl;
+            }
+        }
+    } while(!valid);
+    return file_name;
 }
 
 void InputHandler::readSize(int &height, int &width){
-    char divider;
-    std::cout << "Size (HEIGHT x WIDTH, example: 10 x 10): "; std::cin >> height >> divider >> width;
-    if(divider != 'x'){
-        return;
-    }
+    bool valid;
+    do{
+        valid = true;
+        char divider;
+        std::cout << "Size (HEIGHT x WIDTH, example: 10 x 10): "; std::cin >> height >> divider >> width;
+        if(divider != 'x' || std::cin.bad()){
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            valid = false;
+        }
+    } while(!valid);
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    m_height = height;
+    m_width = width;
+}
+
+int InputHandler::readWord(std::string &input){
+    bool valid;
+    do{
+        valid = true;
+        std::cout << "> ";
+        getline(std::cin, input);
+
+        if(input == "exit"){
+            return -1;
+        }
+        else if(input == "display"){
+            return 1;
+        }
+        valid = testInput(input);
+    } while(!valid);
+    return 0;
+}
+
+bool InputHandler::testInput(std::string input) {
+    if(input[2] != ' ' || input[4] != ' '){
+        return false;
+    }
+    if(input[0] < 'A' || input[0] > 'A' + m_height || input[1] < 'a' || input[1] > 'a' + m_width){
+        return false;
+    }
+    if(input[3] != 'H' && input[3] != 'V'){
+        return false;
+    }
+    std::string word = input.substr(5);
+    for(auto c : word){
+        if(c == ' '){
+            return false;
+        }
+    }
+    return true;
 }
