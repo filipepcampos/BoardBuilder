@@ -10,7 +10,7 @@ std::string InputHandler::readFileName() {
 
 void InputHandler::readSize(int &height, int &width){
     char divider;
-    std::cout << "Size (HEIGHT x WIDTH, example:10 x 10): "; std::cin >> height >> divider >> width;
+    std::cout << "Size (HEIGHT x WIDTH, example: 10 x 10): "; std::cin >> height >> divider >> width;
     if(divider != 'x'){
         return;
     }

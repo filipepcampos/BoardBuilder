@@ -16,7 +16,7 @@ public:
      * @param (int) height - Number of rows
      * @param (int) width - Number of columns
      */
-    Board(int height, int width, std::string file_name);
+    Board(int height, int width, const std::string &file_name);
 
     /**
      * Free the allocated space for the board
@@ -41,8 +41,8 @@ public:
 private:
     bool addHorizontal(int v_pos, int h_pos, const std::string &word);
     bool addVertical(int v_pos, int h_pos, const std::string &word);
-    char **board;
-    int width, height;
-    std::ofstream file;
+    char **m_board;
+    const int m_width, m_height;
+    std::ofstream m_file;
 };
 
