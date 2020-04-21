@@ -6,7 +6,7 @@ struct Word{
     char vertical_char;
     char horizontal_char;
     char orientation;
-    std::string word;
+    std::string text;
 };
 
 class Board{
@@ -41,8 +41,13 @@ public:
 private:
     bool addHorizontal(int v_pos, int h_pos, const std::string &word);
     bool addVertical(int v_pos, int h_pos, const std::string &word);
+    bool searchWord(const std::string &word);
+
     char **m_board;
     const int m_width, m_height;
+    const std::string m_words_file_name = "WORDS_FIXED.TXT";
+    long m_total_lines;
     std::ofstream m_file;
+    std::ifstream m_words_file;
 };
 

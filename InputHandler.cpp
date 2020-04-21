@@ -38,10 +38,8 @@ void InputHandler::readSize(int &height, int &width){
 int InputHandler::readWord(std::string &input){
     bool valid;
     do{
-        valid = true;
         std::cout << "> ";
         getline(std::cin, input);
-
         if(input == "exit"){
             return -1;
         }
@@ -53,19 +51,22 @@ int InputHandler::readWord(std::string &input){
     return 0;
 }
 
-bool InputHandler::testInput(std::string input) {
+bool InputHandler::testInput(const std::string &input) {
     if(input[2] != ' ' || input[4] != ' '){
         return false;
     }
     if(input[0] < 'A' || input[0] > 'A' + m_height || input[1] < 'a' || input[1] > 'a' + m_width){
+        std::cout << "Position outside of board boundaries" << std::endl;
         return false;
     }
     if(input[3] != 'H' && input[3] != 'V'){
+        std::cout << "Orientation value not allowed (Only 'H' or 'V' is allowed)" << std::endl;
         return false;
     }
     std::string word = input.substr(5);
     for(auto c : word){
         if(c == ' '){
+            std::cout << "Word can't contain whitespace" << std::endl;
             return false;
         }
     }

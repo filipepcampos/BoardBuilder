@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 #include "Board.h"
 
 Board::Board(int height, int width, const std::string &file_name)
@@ -12,6 +13,9 @@ Board::Board(int height, int width, const std::string &file_name)
     }
     m_file.open(file_name);
     m_file << height << " x " << width << std::endl;
+    m_words_file.open(m_words_file_name);
+    m_words_file.seekg(0, std::ifstream::end);
+    m_total_lines = m_words_file.tellg() / 50;
 }
 
 Board::~Board(){
@@ -22,15 +26,20 @@ Board::~Board(){
     if(m_file.is_open()){
         m_file.close();
     }
+    if(m_words_file.is_open()){
+        m_words_file.close();
+    }
 }
 
 bool Board::addWord(Word &word) {
     int v_pos = word.vertical_char - 'A';
     int h_pos = word.horizontal_char - 'a';
 
-    bool valid = word.orientation == 'H' ? addHorizontal(v_pos, h_pos, word.word) : addVertical(v_pos, h_pos, word.word);
+    std::transform(word.text.begin(), word.text.end(), word.text.begin(), ::toupper);
+
+    bool valid = word.orientation == 'H' ? addHorizontal(v_pos, h_pos, word.text) : addVertical(v_pos, h_pos, word.text);
     if(valid){
-        m_file << word.vertical_char << word.horizontal_char << " " << word.orientation << " " << word.word << std::endl;
+        m_file << word.vertical_char << word.horizontal_char << " " << word.orientation << " " << word.text << std::endl;
     }
     return valid;
 }
@@ -38,6 +47,7 @@ bool Board::addWord(Word &word) {
 void Board::save(){
     print(m_file);
     m_file.close();
+    m_words_file.close();
 }
 
 void Board::print(std::ostream &stream){
@@ -70,6 +80,9 @@ bool Board::addHorizontal(int v_pos, int h_pos, const std::string &word) {
             return false;
         }
     }
+    if(!searchWord(word)){
+        return false;
+    }
     for(int i = 0; i < word.length(); ++i){
         m_board[v_pos][h_pos + i] = word[i];
     }
@@ -85,8 +98,32 @@ bool Board::addVertical(int v_pos, int h_pos, const std::string &word) {
             return false;
         }
     }
+    if(!searchWord(word)){
+        return false;
+    }
     for(int i = 0; i < word.length(); ++i){
         m_board[v_pos + i][h_pos] = word[i];
     }
     return true;
+}
+
+bool Board::searchWord(const std::string &word){
+    long min = 0, max = m_total_lines;
+    while(min <= max){
+        long m = min + (max - min) / 2;
+        std::string buffer;
+        m_words_file.seekg(50 * m);
+        m_words_file >> buffer;
+        int compare_result = buffer.compare(word);
+        if(compare_result == 0){
+            return true;
+        }
+        if(compare_result < 0){
+            min = m + 1;
+        }
+        if(compare_result > 0){
+            max = m - 1;
+        }
+    }
+    return false;
 }
