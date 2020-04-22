@@ -6,10 +6,9 @@
 Board::Board(int height, int width, const std::string &file_name)
     : m_height(height), m_width(width)
 {
-    m_board = new char* [height];
+    m_board = new Tile* [height];
     for(int i = 0; i < height; ++i){
-        m_board[i] = new char[width];
-        memset(m_board[i], ' ', width*sizeof(char));
+        m_board[i] = new Tile[width];
     }
     m_file.open(file_name);
     m_file << height << " x " << width << std::endl;
@@ -64,7 +63,7 @@ void Board::print(std::ostream &stream){
         char row_char = 'A' + i;
         stream << row_char << " │ ";
         for(int j = 0; j < m_width; ++j){
-            stream << m_board[i][j] << " ";
+            stream << m_board[i][j].letter << " ";
         }
         stream << '\n';
     }
@@ -76,7 +75,8 @@ bool Board::addHorizontal(int v_pos, int h_pos, const std::string &word) {
         return false;
     }
     for(int i = 0; i < word.length(); ++i){
-        if(m_board[v_pos][h_pos + i] != ' ' && m_board[v_pos][h_pos + i] != word[i]){
+        if(m_board[v_pos][h_pos + i].placed_horizontal ||
+            (m_board[v_pos][h_pos + i].letter != ' ' && m_board[v_pos][h_pos + i].letter != word[i])){
             return false;
         }
     }
@@ -84,7 +84,8 @@ bool Board::addHorizontal(int v_pos, int h_pos, const std::string &word) {
         return false;
     }
     for(int i = 0; i < word.length(); ++i){
-        m_board[v_pos][h_pos + i] = word[i];
+        m_board[v_pos][h_pos + i].letter = word[i];
+        m_board[v_pos][h_pos + i].placed_horizontal = true;
     }
     return true;
 }
@@ -94,7 +95,8 @@ bool Board::addVertical(int v_pos, int h_pos, const std::string &word) {
         return false;
     }
     for(int i = 0; i < word.length(); ++i){
-        if(m_board[v_pos + i][h_pos] != ' ' && m_board[v_pos + i][h_pos] != word[i]){
+        if(m_board[v_pos + i][h_pos].placed_vertical ||
+                (m_board[v_pos + i][h_pos].letter != ' ' && m_board[v_pos + i][h_pos].letter != word[i])){
             return false;
         }
     }
@@ -102,7 +104,8 @@ bool Board::addVertical(int v_pos, int h_pos, const std::string &word) {
         return false;
     }
     for(int i = 0; i < word.length(); ++i){
-        m_board[v_pos + i][h_pos] = word[i];
+        m_board[v_pos + i][h_pos].letter = word[i];
+        m_board[v_pos + i][h_pos].placed_vertical = true;
     }
     return true;
 }

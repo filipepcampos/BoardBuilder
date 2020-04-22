@@ -9,6 +9,12 @@ struct Word{
     std::string text;
 };
 
+struct Tile{
+    char letter = ' ';
+    bool placed_horizontal = false;
+    bool placed_vertical = false;
+};
+
 class Board{
 public:
     /**
@@ -30,6 +36,10 @@ public:
      */
     bool addWord(Word &word);
 
+    /**
+     * Write 2D Board to file and close fstreams
+     * @return (none)
+     */
     void save();
 
     /**
@@ -39,11 +49,32 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
+    /**
+     * Add a word horizontally
+     * @param (int) v_pos
+     * @param (int) h_pos
+     * @param (std::string) word
+     * @return (bool)
+     */
     bool addHorizontal(int v_pos, int h_pos, const std::string &word);
+
+    /**
+     * Add a word vertically
+     * @param (int) v_pos
+     * @param (int) h_pos
+     * @param (std::string) word
+     * @return (bool)
+     */
     bool addVertical(int v_pos, int h_pos, const std::string &word);
+
+    /**
+     * Check is a given word is in the words_file
+     * @param (std::string) word
+     * @return (bool)
+     */
     bool searchWord(const std::string &word);
 
-    char **m_board;
+    Tile **m_board;
     const int m_width, m_height;
     const std::string m_words_file_name = "WORDS_FIXED.TXT";
     long m_total_lines;
