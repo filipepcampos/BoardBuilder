@@ -55,7 +55,7 @@ bool InputHandler::testInput(const std::string &input) {
     if(input[2] != ' ' || input[4] != ' '){
         return false;
     }
-    if(input[0] < 'A' || input[0] > 'A' + m_height || input[1] < 'a' || input[1] > 'a' + m_width){
+    if(input[0] < 'A' || input[0] > 'A' + m_height - 1 || input[1] < 'a' || input[1] > 'a' + m_width - 1){
         std::cout << "Position outside of board boundaries" << std::endl;
         return false;
     }
