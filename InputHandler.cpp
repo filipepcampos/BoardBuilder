@@ -53,6 +53,7 @@ int InputHandler::readWord(std::string &input){
 
 bool InputHandler::testInput(const std::string &input) {
     if(input[2] != ' ' || input[4] != ' '){
+        std::cout << "Input wrongly formatted" << std::endl;
         return false;
     }
     if(input[0] < 'A' || input[0] > 'A' + m_height - 1 || input[1] < 'a' || input[1] > 'a' + m_width - 1){

@@ -49,23 +49,7 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
-    /**
-     * Add a word horizontally
-     * @param (int) v_pos
-     * @param (int) h_pos
-     * @param (std::string) word
-     * @return (bool)
-     */
-    bool addHorizontal(int v_pos, int h_pos, const std::string &word);
-
-    /**
-     * Add a word vertically
-     * @param (int) v_pos
-     * @param (int) h_pos
-     * @param (std::string) word
-     * @return (bool)
-     */
-    bool addVertical(int v_pos, int h_pos, const std::string &word);
+    bool validateWord(Word &word);
 
     /**
      * Check is a given word is in the words_file

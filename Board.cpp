@@ -1,4 +1,3 @@
-#include <cstring>
 #include <iostream>
 #include <algorithm>
 #include "Board.h"
@@ -30,19 +29,6 @@ Board::~Board(){
     }
 }
 
-bool Board::addWord(Word &word) {
-    int v_pos = word.vertical_char - 'A';
-    int h_pos = word.horizontal_char - 'a';
-
-    std::transform(word.text.begin(), word.text.end(), word.text.begin(), ::toupper);
-
-    bool valid = word.orientation == 'H' ? addHorizontal(v_pos, h_pos, word.text) : addVertical(v_pos, h_pos, word.text);
-    if(valid){
-        m_file << word.vertical_char << word.horizontal_char << " " << word.orientation << " " << word.text << std::endl;
-    }
-    return valid;
-}
-
 void Board::save(){
     print(m_file);
     m_file.close();
@@ -70,44 +56,43 @@ void Board::print(std::ostream &stream){
     stream << '\n';
 }
 
-bool Board::addHorizontal(int v_pos, int h_pos, const std::string &word) {
-    if(h_pos + word.length() > m_width){
-        return false;
-    }
-    for(int i = 0; i < word.length(); ++i){
-        if(m_board[v_pos][h_pos + i].placed_horizontal ||
-            (m_board[v_pos][h_pos + i].letter != ' ' && m_board[v_pos][h_pos + i].letter != word[i])){
-            return false;
+bool Board::addWord(Word &word) {
+    int v = word.orientation == 'V' ? 1 : 0;
+    int h = word.orientation == 'H' ? 1 : 0;
+    int v_pos = word.vertical_char - 'A';
+    int h_pos = word.horizontal_char - 'a';
+    std::transform(word.text.begin(), word.text.end(), word.text.begin(), ::toupper);
+
+    if(validateWord(word)){
+        for(int i = 0; i < word.text.length(); ++i){
+            Tile *tile = &m_board[v_pos + i * v][h_pos + i * h];
+            tile->letter = word.text[i];
+            bool *placed = word.orientation == 'V' ? &tile->placed_vertical : &tile->placed_horizontal;
+            *placed = true;
         }
+        m_file << word.vertical_char << word.horizontal_char << " " << word.orientation << " " << word.text << std::endl;
+        return true;
     }
-    if(!searchWord(word)){
-        return false;
-    }
-    for(int i = 0; i < word.length(); ++i){
-        m_board[v_pos][h_pos + i].letter = word[i];
-        m_board[v_pos][h_pos + i].placed_horizontal = true;
-    }
-    return true;
+    return false;
 }
 
-bool Board::addVertical(int v_pos, int h_pos, const std::string &word) {
-    if(v_pos + word.length() > m_height){
+bool Board::validateWord(Word &word){
+    int v = word.orientation == 'V' ? 1 : 0;
+    int h = word.orientation == 'H' ? 1 : 0;
+    int v_pos = word.vertical_char - 'A';
+    int h_pos = word.horizontal_char - 'a';
+
+    if(v_pos + word.text.length() * v > m_height || h_pos + word.text.length() * h > m_width){
         return false;
     }
-    for(int i = 0; i < word.length(); ++i){
-        if(m_board[v_pos + i][h_pos].placed_vertical ||
-                (m_board[v_pos + i][h_pos].letter != ' ' && m_board[v_pos + i][h_pos].letter != word[i])){
+    for(int i = 0; i < word.text.length(); ++i){
+        Tile *tile = &m_board[v_pos + i * v][h_pos + i * h];
+        bool overlap = word.orientation == 'V' ? tile->placed_vertical : tile->placed_horizontal;
+        if(overlap || (tile->letter != ' ' && tile->letter != word.text[i]) ){
             return false;
         }
     }
-    if(!searchWord(word)){
-        return false;
-    }
-    for(int i = 0; i < word.length(); ++i){
-        m_board[v_pos + i][h_pos].letter = word[i];
-        m_board[v_pos + i][h_pos].placed_vertical = true;
-    }
-    return true;
+    return searchWord(word.text);
 }
 
 bool Board::searchWord(const std::string &word){
