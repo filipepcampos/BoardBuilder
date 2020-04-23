@@ -8,6 +8,10 @@ std::string InputHandler::readFileName() {
     do {
         valid = true;
         std::cout << "Board file name: "; getline(std::cin, file_name);
+        if(file_name == "WORDS.TXT" || file_name == "temporary_words.txt"){
+            valid = false;
+            std::cout <<  "Can't use reserved name as file name";
+        }
         for(auto c : file_name){
             if(c == ' '){
                 valid = false;
@@ -24,7 +28,7 @@ void InputHandler::readSize(int &height, int &width){
         valid = true;
         char divider;
         std::cout << "Size (HEIGHT x WIDTH, example: 10 x 10): "; std::cin >> height >> divider >> width;
-        if(divider != 'x' || std::cin.bad()){
+        if(divider != 'x' || height > 20 || width > 20 || std::cin.bad()){
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             valid = false;

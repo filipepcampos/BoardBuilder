@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include <string>
+#include <map>
 
 struct Word{
     char vertical_char;
@@ -11,8 +12,7 @@ struct Word{
 
 struct Tile{
     char letter = ' ';
-    bool placed_horizontal = false;
-    bool placed_vertical = false;
+    std::map<char, bool> placed = {{'H', false}, {'V', false}};
 };
 
 class Board{
@@ -49,6 +49,18 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
+    /**
+     * Create a temporary words file from WORDS.TXT
+     * This new file contains lines with fixed length and uppercase letters
+     * This allows the direct application of binary search algorithm over the fstream
+     * @return (none)
+     */
+    void openWordsFile();
+
+    /**
+     * Verify if word is in m_words_file
+     * @return (bool) true if it is, false otherwise
+     */
     bool validateWord(Word &word);
 
     /**
@@ -60,8 +72,10 @@ private:
 
     Tile **m_board;
     const int m_width, m_height;
-    const std::string m_words_file_name = "WORDS_FIXED.TXT";
+    const std::string m_words_file_name = "WORDS.TXT";
+    char m_tmp_file_name[9] = "./XXXXXX";
     long m_total_lines;
+
     std::ofstream m_file;
     std::ifstream m_words_file;
 };

@@ -13,7 +13,7 @@ int main() {
     Board b(height, width, filename);
     std::cout << "Please write words as follows: 'Aa H WORD'\n" << "Aa is the position of the first letter\n" <<
               "H or V represents the orientation of the word (vertical or horizontal)" <<
-              "WORD is the word you wish to output\n" << "If you wish to see current board type 'display\n" <<
+              "WORD is the word you wish to output\n" << "If you wish to see current board type 'display'\n" <<
               "When done please type 'exit' with no whitespace\n";
 
     bool exit = false;
