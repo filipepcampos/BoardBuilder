@@ -1,6 +1,5 @@
 #include "InputHandler.h"
 #include <iostream>
-#include <limits>
 
 std::string InputHandler::readFileName() {
     std::string file_name;
@@ -12,11 +11,13 @@ std::string InputHandler::readFileName() {
             valid = false;
             std::cout <<  "Can't use reserved name as file name" << std::endl;
         }
+
         if(!file_name.empty()){
             for(auto c : file_name){
                 if(c == ' '){
                     valid = false;
                     std::cout << "File name can't contain whitespace" << std::endl;
+                    break;
                 }
             }
         }
@@ -39,10 +40,15 @@ void InputHandler::readSize(int &height, int &width){
         if(std::sscanf(input.c_str(), "%d x %d", &h, &w ) != 2){
             std::cout << "Invalid input" << std::endl;
             valid = false;
+            continue;
+        }
+        if(h <= 0 || h > 20 || w <= 0 || w > 20){
+            std::cout << "Invalid size" << std::endl;
+            valid = false;
         }
     }while(!valid);
-    height = h;
-    width = w;
+    height = h; m_height = h;
+    width = w; m_width = w;
 }
 
 int InputHandler::readWord(std::string &input){
