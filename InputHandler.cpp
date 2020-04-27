@@ -8,35 +8,41 @@ std::string InputHandler::readFileName() {
     do {
         valid = true;
         std::cout << "Board file name: "; getline(std::cin, file_name);
-        if(file_name == "WORDS.TXT" || file_name == "temporary_words.txt"){
+        if(file_name == "WORDS.TXT"){
             valid = false;
-            std::cout <<  "Can't use reserved name as file name";
+            std::cout <<  "Can't use reserved name as file name" << std::endl;
         }
-        for(auto c : file_name){
-            if(c == ' '){
-                valid = false;
-                std::cout << "File name can't contain whitespace" << std::endl;
+        if(!file_name.empty()){
+            for(auto c : file_name){
+                if(c == ' '){
+                    valid = false;
+                    std::cout << "File name can't contain whitespace" << std::endl;
+                }
             }
         }
+        else{
+            std::cout << "File name can't be empty" << std::endl;
+            valid = false;
+        }
+
     } while(!valid);
     return file_name;
 }
 
 void InputHandler::readSize(int &height, int &width){
     bool valid;
+    int h, w;
     do{
         valid = true;
-        char divider;
-        std::cout << "Size (HEIGHT x WIDTH, example: 10 x 10): "; std::cin >> height >> divider >> width;
-        if(divider != 'x' || height > 20 || width > 20 || std::cin.bad()){
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::string input;
+        std::cout << "Size (10 x 10 for example): "; std::getline(std::cin, input, '\n');
+        if(std::sscanf(input.c_str(), "%d x %d", &h, &w ) != 2){
+            std::cout << "Invalid input" << std::endl;
             valid = false;
         }
-    } while(!valid);
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    m_height = height;
-    m_width = width;
+    }while(!valid);
+    height = h;
+    width = w;
 }
 
 int InputHandler::readWord(std::string &input){

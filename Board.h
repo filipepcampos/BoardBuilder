@@ -50,14 +50,6 @@ public:
 
 private:
     /**
-     * Create a temporary words file from WORDS.TXT
-     * This new file contains lines with fixed length and uppercase letters
-     * This allows the direct application of binary search algorithm over the fstream
-     * @return (none)
-     */
-    void openWordsFile();
-
-    /**
      * Verify if word is in m_words_file
      * @return (bool) true if it is, false otherwise
      */
@@ -68,13 +60,11 @@ private:
      * @param (std::string) word
      * @return (bool)
      */
-    bool searchWord(const std::string &word);
+    bool searchWord(std::string &word);
 
     Tile **m_board;
     const int m_width, m_height;
     const std::string m_words_file_name = "WORDS.TXT";
-    char m_tmp_file_name[9] = "./XXXXXX";
-    long m_total_lines;
 
     std::ofstream m_file;
     std::ifstream m_words_file;
