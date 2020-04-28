@@ -56,45 +56,46 @@ void Board::print(std::ostream &stream){
 }
 
 bool Board::addWord(Word &word) {
-    int v = (word.orientation == 'V') ? 1 : 0, h = 1 - v;
-    int v_pos = word.vertical_char - 'A', h_pos = word.horizontal_char - 'a';
-
     if(validateWord(word)){
-        std::transform(word.text.begin(), word.text.end(), word.text.begin(), ::toupper);
-        for(int i = 0; i < word.text.length(); ++i){
-            Tile *tile = &m_board[v_pos + i * v][h_pos + i * h];
-            tile->letter = word.text[i];
-            tile->placed[word.orientation] = true;
+        orientation line = word.getOrientation();
+        std::string text = word.getText();
+        std::pair<char, char> p = word.getPosition();
+
+        for(int i = 0; i < text.length(); ++i){
+            Tile *tile = &m_board[p.first + i * line][p.second + i * (1-line)];
+            tile->letter = text[i];
+            tile->placed[line] = true;
         }
-        m_file << word.vertical_char << word.horizontal_char << " " << word.orientation << " " << word.text << std::endl;
+        m_file << word;
         return true;
     }
     return false;
 }
 
 bool Board::validateWord(Word &word){
-    int v = (word.orientation == 'V') ? 1 : 0, h = 1 - v;
-    int v_pos = word.vertical_char - 'A', h_pos = word.horizontal_char - 'a';
+    orientation line = word.getOrientation();
+    std::string text = word.getText();
+    std::pair<char, char> p = word.getPosition();
 
-    if(v_pos + word.text.length() * v > m_height || h_pos + word.text.length() * h > m_width){
+    if(p.first + text.length() * line > m_height || p.second + text.length() * (1-line) > m_width){
         return false;
     }
-    for(int i = 0; i < word.text.length(); ++i){
-        Tile *tile = &m_board[v_pos + i * v][h_pos + i * h];
-        bool overlap = tile->placed[word.orientation];
-        if(overlap || (tile->letter != ' ' && tile->letter != word.text[i]) ){
+    for(int i = 0; i < text.length(); ++i){
+        Tile *tile = &m_board[p.first + i * line][p.second + i * (1-line)];
+        bool overlap = tile->placed[line];
+        if(overlap || (tile->letter != ' ' && tile->letter != text[i]) ){
             return false;
         }
     }
-    return searchWord(word.text);
+    return searchWord(text);
 }
 
-bool Board::searchWord(std::string &word){
+bool Board::searchWord(std::string &text){
     m_words_file.seekg(0);
-    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+    std::transform(text.begin(), text.end(), text.begin(), ::tolower);
     std::string buffer;
     while(getline(m_words_file, buffer, '\n') && !buffer.empty()){
-        if(word == buffer){
+        if(text == buffer){
             return true;
         }
     }

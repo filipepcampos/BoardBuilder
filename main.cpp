@@ -1,10 +1,11 @@
 #include <iostream>
 #include <string>
 #include "Board.h"
+#include "Word.h"
 #include "InputHandler.h"
 
 int main() {
-    InputHandler input_handler;
+    InputHandler input_handler{};
     std::string filename = input_handler.readFileName();
 
     int height, width;
@@ -18,18 +19,15 @@ int main() {
 
     bool exit = false;
     while(!std::cin.eof() && !exit){
-        std::string clean_input;
-        int status = input_handler.readWord(clean_input);
+        Word word;
+        int status = input_handler.readWord(word);
 
         switch(status){
             case -1: exit = true; continue;
             case 1: b.print(); continue;
         }
 
-        char vertical_char = clean_input[0], horizontal_char = clean_input[1], orientation = clean_input[3];
-        std::string word = clean_input.substr(5);
-        Word w{vertical_char, horizontal_char, orientation, word};
-        if(!b.addWord(w)){
+        if(!b.addWord(word)){
             std::cout << "Invalid word, please try again" << std::endl;
         }
     }

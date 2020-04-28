@@ -3,4 +3,4 @@ project(BoardBuilder)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(BoardBuilder main.cpp Board.h Board.cpp InputHandler.h InputHandler.cpp)
+add_executable(BoardBuilder main.cpp Board.h Board.cpp InputHandler.h InputHandler.cpp Word.cpp Word.h)

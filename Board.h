@@ -2,17 +2,11 @@
 #include <fstream>
 #include <string>
 #include <map>
-
-struct Word{
-    char vertical_char;
-    char horizontal_char;
-    char orientation;
-    std::string text;
-};
+#include "Word.h"
 
 struct Tile{
     char letter = ' ';
-    std::map<char, bool> placed = {{'H', false}, {'V', false}};
+    std::map<orientation, bool> placed = {{H, false}, {V, false}};
 };
 
 class Board{
@@ -60,7 +54,7 @@ private:
      * @param (std::string) word
      * @return (bool)
      */
-    bool searchWord(std::string &word);
+    bool searchWord(std::string &text);
 
     Tile **m_board;
     const int m_width, m_height;

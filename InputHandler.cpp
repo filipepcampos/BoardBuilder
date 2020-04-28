@@ -51,8 +51,9 @@ void InputHandler::readSize(int &height, int &width){
     width = w; m_width = w;
 }
 
-int InputHandler::readWord(std::string &input){
+int InputHandler::readWord(Word &word){
     bool valid;
+    std::string input;
     do{
         std::cout << "> ";
         getline(std::cin, input);
@@ -62,12 +63,13 @@ int InputHandler::readWord(std::string &input){
         else if(input == "display"){
             return 1;
         }
-        valid = testInput(input);
+        valid = testWordInput(input);
     } while(!valid);
+    word = Word{input[0], input[1], input[3], input.substr(5)};
     return 0;
 }
 
-bool InputHandler::testInput(const std::string &input) {
+bool InputHandler::testWordInput(const std::string &input) const {
     if(input[2] != ' ' || input[4] != ' '){
         std::cout << "Input wrongly formatted" << std::endl;
         return false;
