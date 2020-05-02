@@ -28,7 +28,7 @@ int main() {
         }
 
         if(!b.addWord(word)){
-            std::cout << "Invalid word, please try again" << std::endl;
+            std::cout << "Invalid action, please try again" << std::endl;
         }
     }
     b.save();

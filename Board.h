@@ -43,8 +43,19 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
+    /**
+     * Get nth position along a line starting in a given position
+     * @return (Tile*)
+     */
     Tile* getPosition(const std::pair<char, char> &pos, int n, orientation line) const;
 
+    /**
+     * "Place" tiles on adjacent lines to block side-by-side words
+     * @param pos
+     * @param n
+     * @param line
+     * @return (none)
+     */
     void placeAdjacent(const std::pair<char, char> &pos, int n, orientation line);
 
     /**
