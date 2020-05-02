@@ -9,5 +9,6 @@ public:
     int readWord(Word &word);
 private:
     int m_height, m_width;
-    bool testWordInput(const std::string &input) const;
+    bool checkFileName(const std::string &name) const;
+    bool checkWordInput(const std::string &input) const;
 };

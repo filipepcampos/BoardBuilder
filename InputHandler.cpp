@@ -5,26 +5,10 @@ std::string InputHandler::readFileName() {
     std::string file_name;
     bool valid;
     do {
-        valid = true;
         std::cout << "Board file name: "; getline(std::cin, file_name);
-        if(file_name == "WORDS"){
-            valid = false;
-            std::cout <<  "Can't use reserved name as file name" << std::endl;
-        }
 
         if(!file_name.empty()){
-            for(auto c : file_name){
-                if(c == ' '){
-                    valid = false;
-                    std::cout << "File name can't contain whitespace" << std::endl;
-                    break;
-                }
-                else if(c == '.'){
-                    valid = false;
-                    std::cout << "File name can't contain '.'" << std::endl;
-                    break
-                }
-            }
+            valid = checkFileName(file_name);
         }
         else{
             std::cout << "File name can't be empty" << std::endl;
@@ -34,6 +18,24 @@ std::string InputHandler::readFileName() {
     } while(!valid);
     file_name.append(".txt");
     return file_name;
+}
+
+bool InputHandler::checkFileName(const std::string &name) const {
+    if(name == "WORDS"){
+        std::cout <<  "Can't use reserved name as file name" << std::endl;
+        return false;
+    }
+    for(auto c : name){
+        if(c == ' '){
+            std::cout << "File name can't contain whitespace" << std::endl;
+            return false;
+        }
+        else if(c == '.'){
+            std::cout << "File name can't contain '.'" << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
 void InputHandler::readSize(int &height, int &width){
@@ -69,13 +71,13 @@ int InputHandler::readWord(Word &word){
         else if(input == "display"){
             return 1;
         }
-        valid = testWordInput(input);
+        valid = checkWordInput(input);
     } while(!valid);
     word = Word{input[0], input[1], input[3], input.substr(5)};
     return 0;
 }
 
-bool InputHandler::testWordInput(const std::string &input) const {
+bool InputHandler::checkWordInput(const std::string &input) const {
     if(input[2] != ' ' || input[4] != ' '){
         std::cout << "Input wrongly formatted" << std::endl;
         return false;
