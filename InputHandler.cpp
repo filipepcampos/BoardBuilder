@@ -7,7 +7,7 @@ std::string InputHandler::readFileName() {
     do {
         valid = true;
         std::cout << "Board file name: "; getline(std::cin, file_name);
-        if(file_name == "WORDS.TXT"){
+        if(file_name == "WORDS"){
             valid = false;
             std::cout <<  "Can't use reserved name as file name" << std::endl;
         }
@@ -19,6 +19,11 @@ std::string InputHandler::readFileName() {
                     std::cout << "File name can't contain whitespace" << std::endl;
                     break;
                 }
+                else if(c == '.'){
+                    valid = false;
+                    std::cout << "File name can't contain '.'" << std::endl;
+                    break
+                }
             }
         }
         else{
@@ -27,6 +32,7 @@ std::string InputHandler::readFileName() {
         }
 
     } while(!valid);
+    file_name.append(".txt");
     return file_name;
 }
 
