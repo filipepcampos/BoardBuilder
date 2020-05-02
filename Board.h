@@ -43,11 +43,15 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
+    Tile* getPosition(const std::pair<char, char> &pos, int n, orientation line) const;
+
+    void placeAdjacent(const std::pair<char, char> &pos, int n, orientation line);
+
     /**
      * Verify if word is in m_words_file
      * @return (bool) true if it is, false otherwise
      */
-    bool validateWord(Word &word);
+    bool validateWord(const Word &word);
 
     /**
      * Check is a given word is in the words_file

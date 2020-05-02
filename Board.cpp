@@ -59,12 +59,12 @@ bool Board::addWord(Word &word) {
     if(validateWord(word)){
         orientation line = word.getOrientation();
         std::string text = word.getText();
-        std::pair<char, char> p = word.getPosition();
-
+        std::pair<char, char> pos = word.getPosition();
         for(int i = 0; i < text.length(); ++i){
-            Tile *tile = &m_board[p.first + i * line][p.second + i * (1-line)];
+            Tile *tile = getPosition(pos, i, line);
             tile->letter = text[i];
             tile->placed[line] = true;
+            placeAdjacent(pos, i, line);
         }
         m_file << word;
         return true;
@@ -72,22 +72,44 @@ bool Board::addWord(Word &word) {
     return false;
 }
 
-bool Board::validateWord(Word &word){
+void Board::placeAdjacent(const std::pair<char, char> &pos, int n, orientation line) {
+    std::pair<char, char> positions = pos;
+    for(int i = -1; i<=1; i+=2){
+        if(line == H){
+            positions.first = pos.first + i;
+            if(positions.first < 0 || positions.first > m_width){
+                continue;
+            }
+        }
+        else{
+            positions.second = pos.second + i;
+            if(positions.second < 0 || positions.second > m_height){
+                continue;
+            }
+        }
+        getPosition(positions, n, line)->placed[line] = true;
+    }
+}
+
+bool Board::validateWord(const Word &word){
     orientation line = word.getOrientation();
     std::string text = word.getText();
-    std::pair<char, char> p = word.getPosition();
+    std::pair<char, char> pos = word.getPosition();
 
-    if(p.first + text.length() * line > m_height || p.second + text.length() * (1-line) > m_width){
+    if(pos.first + text.length() * line > m_height || pos.second + text.length() * (1-line) > m_width){
         return false;
     }
     for(int i = 0; i < text.length(); ++i){
-        Tile *tile = &m_board[p.first + i * line][p.second + i * (1-line)];
-        bool overlap = tile->placed[line];
-        if(overlap || (tile->letter != ' ' && tile->letter != text[i]) ){
+        Tile *tile = getPosition(pos, i, line);
+        if(tile->placed[line] || (tile->letter != ' ' && tile->letter != text[i]) ){
             return false;
         }
     }
     return searchWord(text);
+}
+
+Tile* Board::getPosition(const std::pair<char, char> &pos, int n, orientation line) const{
+    return &m_board[pos.first + n * line][pos.second + n * (1-line)];
 }
 
 bool Board::searchWord(std::string &text){
