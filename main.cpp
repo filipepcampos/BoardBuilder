@@ -23,7 +23,7 @@ int main() {
               "When done please type 'exit' with no whitespace\n";
 
     bool exit = false;
-    while(!std::cin.eof() && !exit){
+    while(!exit){
         Word word;
         int status = input_handler.readWord(word);
 
@@ -37,5 +37,6 @@ int main() {
         }
     }
     b.save();
+    std::cout << std::endl;
     return 0;
 }

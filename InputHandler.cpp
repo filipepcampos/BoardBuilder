@@ -75,7 +75,7 @@ int InputHandler::readWord(Word &word){
     do{
         std::cout << "> ";
         getline(std::cin, input);
-        if(input == "exit"){
+        if(input == "exit" || std::cin.eof()){
             return -1;
         }
         else if(input == "display"){
