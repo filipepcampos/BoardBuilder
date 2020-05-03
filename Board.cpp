@@ -101,7 +101,8 @@ bool Board::validateWord(const Word &word){
     }
     for(int i = 0; i < text.length(); ++i){
         Tile *tile = getPosition(pos, i, line);
-        if(tile->placed[line] || (tile->letter != ' ' && tile->letter != text[i]) ){
+        orientation opposite_line = line == V ? H : V;
+        if((tile->placed[line] && !tile->placed[opposite_line]) || (tile->letter != ' ' && tile->letter != text[i]) ){
             return false;
         }
     }
@@ -109,7 +110,8 @@ bool Board::validateWord(const Word &word){
 }
 
 Tile* Board::getPosition(const std::pair<char, char> &pos, int n, orientation line) const{
-    return &m_board[pos.first + n * line][pos.second + n * (1-line)];
+    short line_int = line == V ? 1 : 0;
+    return &m_board[pos.first + n * line_int][pos.second + n * (1-line_int)];
 }
 
 bool Board::searchWord(std::string &text){
