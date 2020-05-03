@@ -31,12 +31,8 @@ bool InputHandler::checkFileName(const std::string &name) const {
         return false;
     }
     for(auto c : name){
-        if(c == ' '){
-            std::cout << "File name can't contain whitespace" << std::endl;
-            return false;
-        }
-        else if(c == '.'){
-            std::cout << "File name can't contain '.'" << std::endl;
+        if(!isalpha(c)){
+            std::cout << "File name must contain only alphabetic characters without whitespace" << std::endl;
             return false;
         }
     }
@@ -55,12 +51,14 @@ int InputHandler::readSize(short &height, short &width){
             return -1;
         }
 
-        if(std::sscanf(input.c_str(), "%hd x %hd", &h, &w ) != 2){
-            std::cout << "Invalid input" << std::endl;
-            valid = false;
+        if(std::sscanf(input.c_str(), "%hd x %hd", &h, &w ) == 2){
+            if(h <= 0 || h > 20 || w <= 0 || w > 20){
+                std::cout << "Invalid size" << std::endl;
+                valid = false;
+            }
         }
-        else if(h <= 0 || h > 20 || w <= 0 || w > 20){
-            std::cout << "Invalid size" << std::endl;
+        else{
+            std::cout << "Invalid input" << std::endl;
             valid = false;
         }
     }while(!valid);
