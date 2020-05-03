@@ -16,7 +16,7 @@ public:
      * @param (int) height - Number of rows
      * @param (int) width - Number of columns
      */
-    Board(int height, int width, const std::string &file_name);
+    Board(short height, short width, const std::string &file_name);
 
     /**
      * Free the allocated space for the board
@@ -47,7 +47,7 @@ private:
      * Get nth position along a line starting in a given position
      * @return (Tile*)
      */
-    Tile* getPosition(const std::pair<char, char> &pos, int n, orientation line) const;
+    Tile* getPosition(const std::pair<short, short> &pos, int n, orientation line) const;
 
     /**
      * "Place" tiles on adjacent lines to block side-by-side words
@@ -56,7 +56,7 @@ private:
      * @param line
      * @return (none)
      */
-    void placeAdjacent(const std::pair<char, char> &pos, int n, orientation line);
+    void placeAdjacent(const std::pair<short, short> &pos, int n, orientation line);
 
     /**
      * Verify if word is in m_words_file
@@ -72,7 +72,7 @@ private:
     bool searchWord(std::string &text);
 
     Tile **m_board;
-    const int m_width, m_height;
+    const short m_width, m_height;
     const std::string m_words_file_name = "WORDS.TXT";
 
     std::ofstream m_file;

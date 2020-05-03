@@ -14,8 +14,8 @@ Word::Word(char vertical_char, char horizontal_char, char orientation, std::stri
     std::transform(m_text.begin(), m_text.end(), m_text.begin(), ::toupper);
 }
 
-std::pair<char, char> Word::getPosition() const{
-    return std::pair<char, char>{m_vertical_pos, m_horizontal_pos};
+std::pair<short, short> Word::getPosition() const{
+    return std::pair<short, short>{m_vertical_pos, m_horizontal_pos};
 }
 
 orientation Word::getOrientation() const{

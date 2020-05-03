@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "Board.h"
 
-Board::Board(int height, int width, const std::string &file_name)
+Board::Board(short height, short width, const std::string &file_name)
     : m_height(height), m_width(width)
 {
     m_board = new Tile* [height];
@@ -72,8 +72,8 @@ bool Board::addWord(Word &word) {
     return false;
 }
 
-void Board::placeAdjacent(const std::pair<char, char> &pos, int n, orientation line) {
-    std::pair<char, char> positions = pos;
+void Board::placeAdjacent(const std::pair<short, short> &pos, int n, orientation line) {
+    std::pair<short, short> positions = pos;
     for(int i = -1; i<=1; i+=2){
         if(line == H){
             positions.first = pos.first + i;
@@ -109,7 +109,7 @@ bool Board::validateWord(const Word &word){
     return searchWord(text);
 }
 
-Tile* Board::getPosition(const std::pair<char, char> &pos, int n, orientation line) const{
+Tile* Board::getPosition(const std::pair<short, short> &pos, int n, orientation line) const{
     short line_int = line == V ? 1 : 0;
     return &m_board[pos.first + n * line_int][pos.second + n * (1-line_int)];
 }

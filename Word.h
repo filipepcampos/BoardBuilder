@@ -7,13 +7,13 @@ class Word{
 public:
     Word();
     Word(char vertical_char, char horizontal_char, char orientation, std::string text);
-    std::pair<char, char> getPosition() const;
+    std::pair<short, short> getPosition() const;
     orientation getOrientation() const;
     std::string getText() const;
     friend std::ostream& operator<<(std::ostream &os, const Word &word);
 
 private:
-    unsigned char m_vertical_pos, m_horizontal_pos;
+    short m_vertical_pos, m_horizontal_pos;
     orientation m_line;
     std::string m_text;
 };

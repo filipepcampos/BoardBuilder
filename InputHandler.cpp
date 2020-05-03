@@ -42,9 +42,9 @@ bool InputHandler::checkFileName(const std::string &name) const {
     return true;
 }
 
-void InputHandler::readSize(int &height, int &width){
+void InputHandler::readSize(short &height, short &width){
     bool valid;
-    int h, w;
+    short h, w;
     do{
         valid = true;
         std::string input;
@@ -55,7 +55,7 @@ void InputHandler::readSize(int &height, int &width){
             return;
         }
 
-        if(std::sscanf(input.c_str(), "%d x %d", &h, &w ) != 2){
+        if(std::sscanf(input.c_str(), "%hd x %hd", &h, &w ) != 2){
             std::cout << "Invalid input" << std::endl;
             valid = false;
         }
