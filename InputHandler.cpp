@@ -42,7 +42,7 @@ bool InputHandler::checkFileName(const std::string &name) const {
     return true;
 }
 
-void InputHandler::readSize(short &height, short &width){
+int InputHandler::readSize(short &height, short &width){
     bool valid;
     short h, w;
     do{
@@ -50,9 +50,7 @@ void InputHandler::readSize(short &height, short &width){
         std::string input;
         std::cout << "Size (10 x 10 for example): "; std::getline(std::cin, input, '\n');
         if(std::cin.eof()){
-            height = -1;
-            width = -1;
-            return;
+            return -1;
         }
 
         if(std::sscanf(input.c_str(), "%hd x %hd", &h, &w ) != 2){
@@ -66,6 +64,7 @@ void InputHandler::readSize(short &height, short &width){
     }while(!valid);
     height = h; m_height = h;
     width = w; m_width = w;
+    return 0;
 }
 
 int InputHandler::readWord(Word &word){

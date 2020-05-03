@@ -5,7 +5,7 @@
 class InputHandler{
 public:
     std::string readFileName();
-    void readSize(short &height, short &width);
+    int readSize(short &height, short &width);
     int readWord(Word &word);
 private:
     short m_height, m_width;

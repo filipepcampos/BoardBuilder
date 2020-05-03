@@ -13,8 +13,7 @@ int main() {
     }
 
     short height, width;
-    input_handler.readSize(height, width);
-    if(height == -1 || width == -1){
+    if(input_handler.readSize(height, width) == -1){
         std::cout << "EOF has occurred" << std::endl;
         return 1;
     }
