@@ -8,6 +8,7 @@ std::string InputHandler::readFileName() {
         std::cout << "Board file name: "; getline(std::cin, file_name);
 
         if(std::cin.eof()){
+            std::cout << "EOF has occurred" << std::endl;
             file_name.clear();
             return file_name;
         }
@@ -50,6 +51,7 @@ int InputHandler::readSize(short &height, short &width){
         std::string input;
         std::cout << "Size (10 x 10 for example): "; std::getline(std::cin, input, '\n');
         if(std::cin.eof()){
+            std::cout << "EOF has occurred" << std::endl;
             return -1;
         }
 

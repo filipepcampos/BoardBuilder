@@ -8,13 +8,11 @@ int main() {
     InputHandler input_handler{};
     std::string filename = input_handler.readFileName();
     if(filename.empty()){
-        std::cout << "EOF has occurred" << std::endl;
         return 1;
     }
 
     short height, width;
     if(input_handler.readSize(height, width) == -1){
-        std::cout << "EOF has occurred" << std::endl;
         return 1;
     }
 
