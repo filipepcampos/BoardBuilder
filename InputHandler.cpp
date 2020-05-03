@@ -102,8 +102,8 @@ bool InputHandler::checkWordInput(const std::string &input) const {
     }
     std::string word = input.substr(5);
     for(auto c : word){
-        if(c == ' '){
-            std::cout << "Word can't contain whitespace" << std::endl;
+        if(!isalpha(c)){
+            std::cout << "Word must contain only alphabetic characters without whitespace" << std::endl;
             return false;
         }
     }
