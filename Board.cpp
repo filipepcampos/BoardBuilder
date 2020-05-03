@@ -77,13 +77,13 @@ void Board::placeAdjacent(const std::pair<char, char> &pos, int n, orientation l
     for(int i = -1; i<=1; i+=2){
         if(line == H){
             positions.first = pos.first + i;
-            if(positions.first < 0 || positions.first > m_width){
+            if(positions.first < 0 || positions.first >= m_width){
                 continue;
             }
         }
         else{
             positions.second = pos.second + i;
-            if(positions.second < 0 || positions.second > m_height){
+            if(positions.second < 0 || positions.second >= m_height){
                 continue;
             }
         }
