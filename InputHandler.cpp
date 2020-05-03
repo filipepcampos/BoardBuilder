@@ -7,7 +7,11 @@ std::string InputHandler::readFileName() {
     do {
         std::cout << "Board file name: "; getline(std::cin, file_name);
 
-        if(!file_name.empty()){
+        if(std::cin.eof()){
+            file_name.clear();
+            return file_name;
+        }
+        else if(!file_name.empty()){
             valid = checkFileName(file_name);
         }
         else{
@@ -45,12 +49,17 @@ void InputHandler::readSize(int &height, int &width){
         valid = true;
         std::string input;
         std::cout << "Size (10 x 10 for example): "; std::getline(std::cin, input, '\n');
+        if(std::cin.eof()){
+            height = -1;
+            width = -1;
+            return;
+        }
+
         if(std::sscanf(input.c_str(), "%d x %d", &h, &w ) != 2){
             std::cout << "Invalid input" << std::endl;
             valid = false;
-            continue;
         }
-        if(h <= 0 || h > 20 || w <= 0 || w > 20){
+        else if(h <= 0 || h > 20 || w <= 0 || w > 20){
             std::cout << "Invalid size" << std::endl;
             valid = false;
         }

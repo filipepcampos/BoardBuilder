@@ -7,9 +7,17 @@
 int main() {
     InputHandler input_handler{};
     std::string filename = input_handler.readFileName();
+    if(filename.empty()){
+        std::cout << "EOF has occurred" << std::endl;
+        return 1;
+    }
 
     int height, width;
     input_handler.readSize(height, width);
+    if(height == -1 || width == -1){
+        std::cout << "EOF has occurred" << std::endl;
+        return 1;
+    }
 
     Board b(height, width, filename);
     std::cout << "Please write words as follows: 'Aa H WORD'\n" << "Aa is the position of the first letter\n" <<
