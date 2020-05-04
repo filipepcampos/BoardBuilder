@@ -1,5 +1,6 @@
 #include "InputHandler.h"
 #include <iostream>
+#include <limits>
 
 std::string InputHandler::readFileName() {
     std::string file_name;
@@ -41,29 +42,32 @@ bool InputHandler::checkFileName(const std::string &name) const {
 
 int InputHandler::readSize(short &height, short &width){
     bool valid;
-    short h, w;
     do{
         valid = true;
-        std::string input;
-        std::cout << "Size (10 x 10 for example): "; std::getline(std::cin, input, '\n');
+        char divider;
+        std::cout << "Size (10 x 10 for example): ";
+        std::cin >> m_height >> divider >> m_width;
         if(std::cin.eof()){
             std::cout << "EOF has occurred" << std::endl;
             return -1;
         }
-
-        if(std::sscanf(input.c_str(), "%hd x %hd", &h, &w ) == 2){
-            if(h <= 0 || h > 20 || w <= 0 || w > 20){
-                std::cout << "Invalid size" << std::endl;
-                valid = false;
-            }
+        if(std::cin.fail()){
+            valid = false;
+            std::cin.clear();
         }
-        else{
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if(divider != 'x' && divider != 'X'){
             std::cout << "Invalid input" << std::endl;
             valid = false;
         }
+        else if(m_height <= 0 || m_height > 20 || m_width <= 0 || m_width > 20){
+            std::cout << "Invalid size" << std::endl;
+            valid = false;
+        }
     }while(!valid);
-    height = h; m_height = h;
-    width = w; m_width = w;
+    height = m_height;
+    width = m_width;
     return 0;
 }
 
