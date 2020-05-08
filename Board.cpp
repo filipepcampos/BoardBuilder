@@ -20,12 +20,6 @@ Board::~Board(){
         delete [] m_board[i];
     }
     delete [] m_board;
-    if(m_file.is_open()){
-        m_file.close();
-    }
-    if(m_words_file.is_open()){
-        m_words_file.close();
-    }
 }
 
 void Board::save(){
