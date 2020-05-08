@@ -3,6 +3,9 @@
 #include "Board.h"
 #include "Word.h"
 #include "InputHandler.h"
+#define BLUE "\u001b[36m"
+#define RED "\u001b[31m"
+#define RESET "\u001b[0m"
 
 int main() {
     InputHandler input_handler{};
@@ -40,10 +43,10 @@ int main() {
 
 
     if(b.save()){
-        std::cout << "Board has been saved" << std::endl;
+        std::cout << BLUE << "Board has been saved" << RESET << std::endl;
     }
     else{
-        std::cout << "Board wasn't saved due to lack of letters" << std::endl;
+        std::cout << RED << "Board wasn't saved due to lack of letters" << RESET << std::endl;
     }
     std::cout << std::endl;
     return 0;

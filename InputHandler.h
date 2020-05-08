@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "Word.h"
+#define RED "\u001b[31m"
+#define RESET "\u001b[0m"
 
 class InputHandler{
 public:

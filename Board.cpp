@@ -124,11 +124,22 @@ Tile* Board::getPosition(const std::pair<short, short> &pos, int n, orientation 
 bool Board::searchWord(std::string &text){
     m_words_file.seekg(0);
     std::transform(text.begin(), text.end(), text.begin(), ::tolower);
-    std::string buffer;
-    while(getline(m_words_file, buffer, '\n') && !buffer.empty()){
-        if(text == buffer){
+
+    std::string buffers[2];
+    int i = 0;
+
+    while(getline(m_words_file, buffers[i], '\n') && !buffers[i].empty()){
+        int compare_val = text.compare(buffers[i]);
+        if(compare_val == 0){
             return true;
         }
+        if(compare_val < 0){
+            std::cout << "Did you mean " << BLUE << buffers[0] << RESET << " or " << BLUE << buffers[1] << RESET << "?" << std::endl;
+            return false;
+        }
+        i = ++i % 2;
     }
+    m_words_file.clear(); // If code reached this point then EOF most likely has occurred.
+    std::cout << "Did you mean " << BLUE << buffers[++i % 2] << RESET << "?" << std::endl;
     return false;
 }

@@ -5,6 +5,9 @@
 #include <sstream>
 #include "Word.h"
 
+#define BLUE "\u001b[36m"
+#define RESET "\u001b[0m"
+
 struct Tile{
     char letter = ' ';
     std::map<orientation, bool> placed = {{H, false}, {V, false}};
