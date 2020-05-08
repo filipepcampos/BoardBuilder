@@ -61,7 +61,7 @@ int InputHandler::readSize(short &height, short &width){
             std::cout << "Invalid input" << std::endl;
             valid = false;
         }
-        else if(m_height <= 0 || m_height > 20 || m_width <= 0 || m_width > 20){
+        else if(m_height <= 0 || m_height > 20 || m_width <= 0 || m_width > 20 || m_width * m_height < 14){
             std::cout << "Invalid size" << std::endl;
             valid = false;
         }

@@ -1,18 +1,15 @@
 #include <iostream>
 #include <algorithm>
+#include <utility>
 #include "Board.h"
 
-Board::Board(short height, short width, const std::string &file_name)
-    : m_height(height), m_width(width)
+Board::Board(short height, short width, std::string file_name)
+    : m_height(height), m_width(width), m_file_name(std::move(file_name)), m_words_file(m_words_file_name)
 {
     m_board = new Tile* [height];
     for(int i = 0; i < height; ++i){
         m_board[i] = new Tile[width];
     }
-    m_file.open(file_name);
-    m_file << height << " x " << width << std::endl;
-
-    m_words_file.open(m_words_file_name);
 }
 
 Board::~Board(){
@@ -22,10 +19,26 @@ Board::~Board(){
     delete [] m_board;
 }
 
-void Board::save(){
-    print(m_file);
-    m_file.close();
-    m_words_file.close();
+bool Board::save(){
+    int count = 0;
+    for(int i = 0; i < m_height; i++){
+        for(int j = 0; j < m_width; j++){
+            if(m_board[i][j].letter != ' '){
+                count++;
+            }
+        }
+    }
+    if(count >= 14){
+        std::ofstream file;
+        file.open(m_file_name);
+        file << m_height << " x " << m_width << std::endl;
+        file << m_input_words.rdbuf();
+        print(file);
+        file.close();
+        m_words_file.close();
+        return true;
+    }
+    return false;
 }
 
 void Board::print(std::ostream &stream){
@@ -60,7 +73,7 @@ bool Board::addWord(Word &word) {
             tile->placed[line] = true;
             placeAdjacent(pos, i, line);
         }
-        m_file << word;
+        m_input_words << word;
         return true;
     }
     return false;

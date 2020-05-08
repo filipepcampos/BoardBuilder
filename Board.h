@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <sstream>
 #include "Word.h"
 
 struct Tile{
@@ -16,7 +17,7 @@ public:
      * @param (int) height - Number of rows
      * @param (int) width - Number of columns
      */
-    Board(short height, short width, const std::string &file_name);
+    Board(short height, short width, std::string file_name);
 
     /**
      * Free the allocated space for the board
@@ -31,10 +32,10 @@ public:
     bool addWord(Word &word);
 
     /**
-     * Write 2D Board to file and close fstreams
+     * Write board to file
      * @return (none)
      */
-    void save();
+    bool save();
 
     /**
      * Output the 2D representation of the game board to a ostream (std::cout by default)
@@ -43,6 +44,14 @@ public:
     void print(std::ostream &stream = std::cout);
 
 private:
+    Tile **m_board;
+    const short m_width, m_height;
+    const std::string m_words_file_name = "WORDS.TXT";
+    const std::string m_file_name;
+
+    std::ifstream m_words_file;
+    std::stringstream m_input_words;
+
     /**
      * Get nth position along a line starting in a given position
      * @return (Tile*)
@@ -70,12 +79,5 @@ private:
      * @return (bool)
      */
     bool searchWord(std::string &text);
-
-    Tile **m_board;
-    const short m_width, m_height;
-    const std::string m_words_file_name = "WORDS.TXT";
-
-    std::ofstream m_file;
-    std::ifstream m_words_file;
 };
 

@@ -20,7 +20,8 @@ int main() {
     std::cout << "Please write words as follows: 'Aa H WORD'\n" << "Aa is the position of the first letter\n" <<
               "H or V represents the orientation of the word (vertical or horizontal)" <<
               "WORD is the word you wish to output\n" << "If you wish to see current board type 'display'\n" <<
-              "When done please type 'exit' with no whitespace\n";
+              "When done please type 'exit' with no whitespace\n" <<
+              "If your board doesn't have at least 14 letters it won't be saved\n";
 
     bool exit = false;
     while(!exit){
@@ -36,7 +37,14 @@ int main() {
             std::cout << "Invalid action, please try again" << std::endl;
         }
     }
-    b.save();
+
+
+    if(b.save()){
+        std::cout << "Board has been saved" << std::endl;
+    }
+    else{
+        std::cout << "Board wasn't saved due to lack of letters" << std::endl;
+    }
     std::cout << std::endl;
     return 0;
 }
