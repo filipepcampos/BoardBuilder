@@ -125,7 +125,8 @@ bool Board::searchWord(std::string &text){
     m_words_file.seekg(0);
     std::transform(text.begin(), text.end(), text.begin(), ::tolower);
 
-    std::string buffers[2];
+    std::string buffers[2]; // Two buffer strings are used to keep the last word read, allowing to suggest word
+                            // that's immediately before and after text
     int i = 0;
 
     while(getline(m_words_file, buffers[i], '\n') && !buffers[i].empty()){
@@ -134,12 +135,12 @@ bool Board::searchWord(std::string &text){
             return true;
         }
         if(compare_val < 0){
-            std::cout << "Did you mean " << BLUE << buffers[0] << RESET << " or " << BLUE << buffers[1] << RESET << "?" << std::endl;
+            std::cout << "Suggestion: " << BLUE << buffers[0] << RESET << " or " << BLUE << buffers[1] << RESET << std::endl;
             return false;
         }
         i = ++i % 2;
     }
     m_words_file.clear(); // If code reached this point then EOF most likely has occurred.
-    std::cout << "Did you mean " << BLUE << buffers[++i % 2] << RESET << "?" << std::endl;
+    std::cout << "Suggestion: " << BLUE << buffers[++i % 2] << RESET << std::endl;
     return false;
 }

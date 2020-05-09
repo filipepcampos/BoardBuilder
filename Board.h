@@ -78,6 +78,7 @@ private:
 
     /**
      * Check is a given word is in the words_file
+     * If a text isn't present in WORDS file, then closest words will be suggested
      * @param (std::string) word
      * @return (bool)
      */
