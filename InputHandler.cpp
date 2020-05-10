@@ -85,7 +85,7 @@ int InputHandler::readWord(Word &word) const{
         }
         valid = checkWordInput(input);
     } while(!valid);
-    word = Word{input[0], input[1], input[3], input.substr(5)};
+    word.setValues(input[0], input[1], input[3], input.substr(5));
     return 0;
 }
 

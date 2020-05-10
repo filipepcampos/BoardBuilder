@@ -14,6 +14,14 @@ Word::Word(char vertical_char, char horizontal_char, char orientation, std::stri
     std::transform(m_text.begin(), m_text.end(), m_text.begin(), ::toupper);
 }
 
+void Word::setValues(char vertical_char, char horizontal_char, char orientation, std::string text) {
+    m_line = orientation == 'V' ? V : H;
+    m_vertical_pos = vertical_char - 'A';
+    m_horizontal_pos = horizontal_char - 'a';
+    m_text = std::move(text);
+    std::transform(m_text.begin(), m_text.end(), m_text.begin(), ::toupper);
+}
+
 std::pair<short, short> Word::getPosition() const{
     return std::pair<short, short>{m_vertical_pos, m_horizontal_pos};
 }

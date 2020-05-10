@@ -7,6 +7,7 @@ class Word{
 public:
     Word();
     Word(char vertical_char, char horizontal_char, char orientation, std::string text);
+    void setValues(char vertical_char, char horizontal_char, char orientation, std::string text);
     std::pair<short, short> getPosition() const;
     orientation getOrientation() const;
     std::string getText() const;
