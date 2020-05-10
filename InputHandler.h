@@ -6,11 +6,11 @@
 
 class InputHandler{
 public:
-    std::string readFileName();
+    static std::string readFileName();
     int readSize(short &height, short &width);
-    int readWord(Word &word);
+    int readWord(Word &word) const;
 private:
     short m_height, m_width;
-    bool checkFileName(const std::string &name) const;
+    static bool checkFileName(const std::string &name) ;
     bool checkWordInput(const std::string &input) const;
 };

@@ -26,7 +26,7 @@ std::string InputHandler::readFileName() {
     return file_name;
 }
 
-bool InputHandler::checkFileName(const std::string &name) const {
+bool InputHandler::checkFileName(const std::string &name) {
     if(name == "WORDS"){
         std::cout <<  "Can't use " << RED << "reserved name" << RESET " as file name" << std::endl;
         return false;
@@ -71,7 +71,7 @@ int InputHandler::readSize(short &height, short &width){
     return 0;
 }
 
-int InputHandler::readWord(Word &word){
+int InputHandler::readWord(Word &word) const{
     bool valid;
     std::string input;
     do{
