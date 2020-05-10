@@ -10,7 +10,7 @@
 
 struct Tile{
     char letter = ' ';
-    std::map<orientation, bool> placed = {{H, false}, {V, false}};
+    std::map<orientation, bool> reserved = {{H, false}, {V, false}};
 };
 
 class Board{
@@ -68,7 +68,7 @@ private:
      * @param line
      * @return (none)
      */
-    void placeAdjacent(const std::pair<short, short> &pos, int n, orientation line);
+    void reserveAdjacent(const std::pair<short, short> &pos, int n, orientation line);
 
     /**
      * Verify if word is in m_words_file

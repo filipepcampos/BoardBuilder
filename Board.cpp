@@ -70,8 +70,8 @@ bool Board::addWord(Word &word) {
         for(int i = 0; i < text.length(); ++i){
             Tile *tile = getPosition(pos, i, line);
             tile->letter = text[i];
-            tile->placed[line] = true;
-            placeAdjacent(pos, i, line);
+            tile->reserved[line] = true;
+            reserveAdjacent(pos, i, line);
         }
         m_input_words << word;
         return true;
@@ -79,37 +79,54 @@ bool Board::addWord(Word &word) {
     return false;
 }
 
-void Board::placeAdjacent(const std::pair<short, short> &pos, int n, orientation line) {
+void Board::reserveAdjacent(const std::pair<short, short> &pos, int n, orientation line) {
     std::pair<short, short> positions = pos;
     for(int i = -1; i<=1; i+=2){
         if(line == H){
             positions.first = pos.first + i;
-            if(positions.first < 0 || positions.first >= m_width){
+            if(positions.first < 0 || positions.first >= m_height){
                 continue;
             }
         }
         else{
             positions.second = pos.second + i;
-            if(positions.second < 0 || positions.second >= m_height){
+            if(positions.second < 0 || positions.second >= m_width){
                 continue;
             }
         }
-        getPosition(positions, n, line)->placed[line] = true;
+        getPosition(positions, n, line)->reserved[line] = true;
     }
 }
 
 bool Board::validateWord(const Word &word){
     orientation line = word.getOrientation();
+    int line_int = line == V ? 1 : 0;
     std::string text = word.getText();
     std::pair<char, char> pos = word.getPosition();
+    std::pair<char, char> end_pos{pos.first + text.length() * line_int, pos.second + text.length() * (1-line_int)};
 
-    if(pos.first + text.length() * line > m_height || pos.second + text.length() * (1-line) > m_width){
+    if(end_pos.first >= m_height || end_pos.second >= m_width){
         return false;
     }
+
+    // Check behind first later and beyond last letter, if not empty the word isn't valid
+    Tile *tile = getPosition(pos, -1, line);
+    if(tile){
+        if(tile->letter != ' ') {return false;}
+    }
+    tile = getPosition(end_pos, 1, line);
+    if(tile){
+        if(tile->letter != ' '){ return false;}
+    }
+
+    // Validate each tile the word will occupy
     for(int i = 0; i < text.length(); ++i){
-        Tile *tile = getPosition(pos, i, line);
-        orientation opposite_line = line == V ? H : V;
-        if((tile->placed[line] && !tile->placed[opposite_line]) || (tile->letter != ' ' && tile->letter != text[i]) ){
+        tile = getPosition(pos, i, line);
+        if(tile->letter != ' ' && tile->letter != text[i]){
+            return false;
+        }
+        if((tile->reserved[line] && tile->letter != text[i])){ // A letter can be placed in reserved spot
+                                                                // if it belongs to an already existing word
             return false;
         }
     }
@@ -118,7 +135,12 @@ bool Board::validateWord(const Word &word){
 
 Tile* Board::getPosition(const std::pair<short, short> &pos, int n, orientation line) const{
     short line_int = line == V ? 1 : 0;
-    return &m_board[pos.first + n * line_int][pos.second + n * (1-line_int)];
+    int v = pos.first + n * line_int;
+    int h = pos.second + n * (1-line_int);
+    if(v < 0 || v >= m_height || h < 0 || h >= m_width){
+        return nullptr;
+    }
+    return &m_board[v][h];
 }
 
 bool Board::searchWord(std::string &text){
