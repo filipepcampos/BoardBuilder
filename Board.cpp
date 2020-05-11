@@ -151,7 +151,7 @@ bool Board::searchWord(std::string &text){
                             // that's immediately before and after text
     int i = 0;
 
-    while(getline(m_words_file, buffers[i], '\n') && !buffers[i].empty()){
+    while(getline(m_words_file, buffers[i]) && !buffers[i].empty()){
         int compare_val = text.compare(buffers[i]);
         if(compare_val == 0){
             return true;
