@@ -1,3 +1,0 @@
-/mnt/c/Users/user/Desktop/boardbuilder/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/user/Desktop/boardbuilder/cmake-build-debug/CMakeFiles/BoardBuilder.dir
-/mnt/c/Users/user/Desktop/boardbuilder/cmake-build-debug/CMakeFiles/edit_cache.dir

@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/BoardBuilder.dir/main.cpp.o CMakeFiles/BoardBuilder.dir/Board.cpp.o CMakeFiles/BoardBuilder.dir/IO.cpp.o CMakeFiles/BoardBuilder.dir/Word.cpp.o  -o BoardBuilder 
