@@ -2,16 +2,23 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include <sstream>
+#include <vector>
 #include "Word.h"
 
-#define BLUE "\u001b[36m"
-#define RESET "\u001b[0m"
-
-struct Tile{
-    char letter = ' ';
-    std::map<orientation, bool> reserved = {{H, false}, {V, false}};
-};
+namespace detail{
+    /**
+     * - Both 'reserved' and 'occupied' are used to filter invalid positions, occupied deals with overlapping words along
+     * the same line while reserved checks for side-by-side words.
+     * - 'occupied' are Tiles occupied by a word in a given line
+     * - 'reserved' are Tiles adjacent to a word in a given line, can only be placed if occupied by a letter belonging
+     * to opposite
+     */
+    struct Tile{
+        char letter = ' ';
+        std::map<orientation, bool> reserved = {{H, false}, {V, false}};
+        std::map<orientation, bool> occupied = {{H, false}, {V, false}};
+    };
+}
 
 class Board{
 public:
@@ -44,28 +51,28 @@ public:
      * Output the 2D representation of the game board to a ostream (std::cout by default)
      * @return (none)
      */
-    void print(std::ostream &stream = std::cout);
+    void print(std::ostream &stream = std::cout) const;
 
 private:
-    Tile **m_board;
+    detail::Tile **m_board;
     const short m_width, m_height;
     const std::string m_words_file_name = "WORDS.TXT";
     const std::string m_file_name;
 
+    std::vector<Word> m_word_vector;
     std::ifstream m_words_file;
-    std::stringstream m_input_words;
 
     /**
      * Get nth position along a line starting in a given position
      * @return (Tile*)
      */
-    Tile* getPosition(const std::pair<short, short> &pos, int n, orientation line) const;
+    detail::Tile* getPosition(const std::pair<short, short> &pos, int n, orientation line) const;
 
     /**
-     * "Place" tiles on adjacent lines to block side-by-side words
-     * @param pos
-     * @param n
-     * @param line
+     * Reserve tiles adjacent to n'th letter of a word
+     * @param pos - Position of first letter of word
+     * @param n - index of letter to reserve
+     * @param line - orientation of the word
      * @return (none)
      */
     void reserveAdjacent(const std::pair<short, short> &pos, int n, orientation line);
