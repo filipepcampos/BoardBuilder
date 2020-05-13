@@ -1,0 +1,16 @@
+6 x 6
+Aa H WORD
+Aa V WORD
+Ad V DOG
+Bd H ON
+Fa H COPSE
+
+  │ a b c d e f 
+──┴────────────
+A │ W O R D     
+B │ O     O N   
+C │ R     G     
+D │ D           
+E │             
+F │ C O P S E   
+
