@@ -7,116 +7,6 @@
 #define RED "\u001b[31m"
 #define RESET "\u001b[0m"
 
-std::string IO::readFileName() {
-    std::string file_name;
-    bool valid;
-    do {
-        file_name = inputPrompt("Board file name");
-        if(std::cin.eof()) {
-            error("EOF has occurred", false);
-            return file_name;
-        } else if (!file_name.empty()) {
-            valid = checkFileName(file_name);
-        } else {
-            error("File name can't be empty", false);
-            valid = false;
-        }
-
-    } while (!valid);
-    file_name.append(".txt");
-    return file_name;
-}
-
-bool IO::checkFileName(const std::string &name) {
-    if (name == "WORDS") {
-        error("Can't use reserved name as file name", false);
-        return false;
-    }
-    for (auto c : name) {
-        if (!isalnum(c)) {
-            error("File name must contain only alphanumeric characters without whitespace", false);
-            return false;
-        }
-    }
-    return true;
-}
-
-int IO::readSize(short &height, short &width) {
-    bool valid;
-    do {
-        valid = true;
-        std::string buffer = inputPrompt("Size (10 x 10 for example)");
-        if (std::cin.eof()) {
-            error("EOF has occurred");
-            return -1;
-        }
-        std::stringstream ss(buffer);
-
-        char divider;
-        ss >> m_height >> divider >> m_width;
-        if (ss.fail() || ss.rdbuf()->in_avail() || (divider != 'x' && divider != 'X')) {
-            error("Invalid input", false);
-            valid = false;
-        } else if (m_height <= 0 || m_height > 20 || m_width <= 0 || m_width > 20 || m_width * m_height < 14) {
-            error("Invalid size", false);
-            valid = false;
-        }
-    } while (!valid);
-    height = m_height;
-    width = m_width;
-    return 0;
-}
-
-int IO::readInput(Word &word) const {
-    std::string input = inputPrompt("");
-    if (input == "exit" || std::cin.eof()) {
-        return -1;
-    }
-    else if (input == "instructions"){
-        IO::instructions();
-        return 1;
-    }
-    if(checkWordInput(input)){
-        word.setValues(input[0], input[1], input[3], input.substr(5));
-        return 0;
-    }
-    return 1;
-}
-
-void IO::error(const std::string &s, bool wait) {
-    std::cout << RED << s << RESET << std::endl;
-    if(wait){
-        pressToContinue();
-    }
-}
-
-bool IO::checkWordInput(const std::string &input) const {
-    if (input[2] != ' ' || input[4] != ' ') {
-        error("Input wrongly formatted");
-        return false;
-    }
-    if (input[0] < 'A' || input[0] > 'A' + m_height - 1 || input[1] < 'a' || input[1] > 'a' + m_width - 1) {
-        error("Position outside of board boundaries");
-        return false;
-    }
-    if (input[3] != 'H' && input[3] != 'V') {
-        error("Orientation value not allowed (Only 'H' or 'V' is allowed)");
-        return false;
-    }
-    std::string word = input.substr(5);
-    if (word.size() < 2) {
-        error("Word must have at least two characters");
-        return false;
-    }
-    for (auto c : word) {
-        if (!isalpha(c)) {
-            error("Word must contain only alphabetic characters without whitespace");
-            return false;
-        }
-    }
-    return true;
-}
-
 void IO::instructions() {
     std::cout << CLEAR;
     std::cout << "\n\nPlease write words as follows: '" << BLUE << "Aa H WORD" << RESET << "'\n" <<
@@ -166,12 +56,138 @@ void IO::pressToContinue() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-std::string IO::inputPrompt(const std::string &message) {
+template<typename T>
+bool IO::read(T &var, bool(*test)(const T &var), bool(*convert)(T &var, const std::string &str)) {
+    std::cout << "\n > ";
     std::string buffer;
-    std::cout << message << std::endl << std::endl << "> ";
-    getline(std::cin, buffer);
+    std::getline(std::cin, buffer);
+
     if(std::cin.eof()){
-        return "";
+        var = T{};
+        return true;
     }
-    return buffer;
+    if((*convert)(var, buffer)){
+        return test(var);
+    }
+    return false;
+}
+
+bool IO::stringConverter(std::string &var, const std::string &str) {
+    var = str;
+    return true;
+}
+bool IO::sizeConverter(std::pair<short, short> &size, const std::string &str) {
+    std::stringstream ss{str};
+    char divider;
+    ss >> size.first >> divider >> size.second;
+    if(ss.fail() || ss.rdbuf()->in_avail() || ::tolower(divider) != 'x') {
+        error("Invalid input", false);
+        return false;
+    }
+    return true;
+}
+
+// -------------------------- File name ----------------------------
+std::string IO::readFileName() {
+    std::string file_name;
+    while(true){
+        std::cout << "Board file name";
+        if(read(file_name, testFileName, stringConverter)){
+            break;
+        }
+    }
+    if(!file_name.empty()){
+        file_name.append(".txt");
+    }
+    return file_name;
+}
+bool IO::testFileName(const std::string &name){
+    if(!name.empty()){
+        if (name == "WORDS") {
+            error("Can't use reserved name as file name", false);
+            return false;
+        }
+        for (auto c : name) {
+            if (!isalnum(c)) {
+                error("File name must contain only alphanumeric characters without whitespace", false);
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// ---------------------- Size -------------------------------
+int IO::readSize(short &height, short &width) {
+    std::pair<short, short> pos{};
+    while(true){
+        std::cout << "Size (10 x 10 for example)";
+        if(read(pos, testSize, sizeConverter)){
+            break;
+        }
+    }
+    height = pos.first;
+    width = pos.second;
+    return height;
+}
+
+bool IO::testSize(const std::pair<short, short> &size) {
+    if(size.first <= 0 || size.first > 20 || size.second <= 0 || size.second > 20 || size.second * size.first < 14){
+        error("Invalid size", false);
+        return false;
+    }
+    return true;
+}
+
+// -------------------------- Word input ----------------------------------
+int IO::readWordInput(Word &word) {
+    std::string raw_word;
+    if(read(raw_word, testWordInput, stringConverter)){
+        if (raw_word == "exit" || raw_word.empty()) {
+            return -1;
+        }
+        else if (raw_word == "instructions"){
+            IO::instructions();
+            return 1;
+        }
+        else{
+            word.setValues(raw_word[0], raw_word[1], raw_word[3], raw_word.substr(5));
+            return 0;
+        }
+    }
+    return 1;
+}
+
+bool IO::testWordInput(const std::string &input) {
+    if(input == "exit" || input == "instructions"){
+        return true;
+    }
+    if (input[2] != ' ' || input[4] != ' ') {
+        error("Input wrongly formatted");
+        return false;
+    }
+    if (input[3] != 'H' && input[3] != 'V') {
+        error("Orientation value not allowed (Only 'H' or 'V' is allowed)");
+        return false;
+    }
+    std::string word = input.substr(5);
+    if (word.size() < 2) {
+        error("Word must have at least two characters");
+        return false;
+    }
+    for (auto c : word) {
+        if (!isalpha(c)) {
+            error("Word must contain only alphabetic characters without whitespace");
+            return false;
+        }
+    }
+    return true;
+}
+
+void IO::error(const std::string &s, bool wait) {
+    std::cout << RED << s << RESET << std::endl;
+    if(wait){
+        pressToContinue();
+    }
 }

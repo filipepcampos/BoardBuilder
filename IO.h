@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <sstream>
 #include "Word.h"
 #define RED "\u001b[31m"
 #define BLUE "\u001b[36m"
@@ -48,7 +49,7 @@ public:
      * @param width
      * @return 0 if read was successfull, -1 if EOF occurred
      */
-    int readSize(short &height, short &width);
+    static int readSize(short &height, short &width);
 
     /**
      * Read a word or special command from user
@@ -57,34 +58,26 @@ public:
      * @param word
      * @return -1 to exit program, 0 if a word was read, 1 if read was invalid
      */
-    int readInput(Word &word) const;
+    static int readWordInput(Word &word);
 private:
-    short m_height, m_width;
-
-    /**
-     * Make sure file name is allowed
-     * @param name
-     * @return
-     */
-    static bool checkFileName(const std::string &name);
-
-    /**
-     * Make sure word is allowed
-     * @param input
-     * @return
-     */
-    bool checkWordInput(const std::string &input) const;
-
     /**
      * Output an error message
      * @param s
      */
     static void error(const std::string &s, bool wait=true);
 
-    static std::string inputPrompt(const std::string &message);
-
     /**
      * Wait for user to press a key to continue execution
      */
     static void pressToContinue();
+
+    template <typename T>
+    static bool read(T &var, bool(*test)(const T &var), bool(*convert)(T &var, const std::string &str));
+
+    static bool stringConverter(std::string &var, const std::string &str);
+
+    static bool testFileName(const std::string &name);
+    static bool sizeConverter(std::pair<short, short> &size, const std::string &str);
+    static bool testSize(const std::pair<short, short> &size);
+    static bool testWordInput(const std::string &input);
 };

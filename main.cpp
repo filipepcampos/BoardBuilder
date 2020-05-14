@@ -5,15 +5,13 @@
 #include "IO.h"
 
 int main() {
-    IO io{};
-
     IO::displayTitle();
-    std::string filename = io.readFileName();
+    std::string filename = IO::readFileName();
     if(filename.empty()){
         return 1;
     }
     short height, width;
-    if(io.readSize(height, width) <= 0){
+    if(IO::readSize(height, width) <= 0){
         return 1;
     }
 
@@ -24,7 +22,7 @@ int main() {
     while(!exit){
         b.print();
         Word word;
-        int status = io.readInput(word);
+        int status = IO::readWordInput(word);
 
         switch(status){
             case -1: exit = true; continue;
