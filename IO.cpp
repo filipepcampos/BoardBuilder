@@ -11,17 +11,14 @@ std::string IO::readFileName() {
     std::string file_name;
     bool valid;
     do {
-        std::cout << "Board file name: ";
-        getline(std::cin, file_name);
-
-        if (std::cin.eof()) {
-            std::cout << RED << "EOF" << RESET << " has occurred" << std::endl;
-            file_name.clear();
+        file_name = inputPrompt("Board file name");
+        if(std::cin.eof()) {
+            error("EOF has occurred", false);
             return file_name;
         } else if (!file_name.empty()) {
             valid = checkFileName(file_name);
         } else {
-            std::cout << "File name can't be " << RED << "empty" << RESET << std::endl;
+            error("File name can't be empty", false);
             valid = false;
         }
 
@@ -32,13 +29,12 @@ std::string IO::readFileName() {
 
 bool IO::checkFileName(const std::string &name) {
     if (name == "WORDS") {
-        std::cout << "Can't use " << RED << "reserved name" << RESET " as file name" << std::endl;
+        error("Can't use reserved name as file name", false);
         return false;
     }
     for (auto c : name) {
         if (!isalnum(c)) {
-            std::cout << "File name must contain only " << RED << "alphanumeric characters without whitespace" << RESET
-                      << std::endl;
+            error("File name must contain only alphanumeric characters without whitespace", false);
             return false;
         }
     }
@@ -49,13 +45,9 @@ int IO::readSize(short &height, short &width) {
     bool valid;
     do {
         valid = true;
-        std::cout << "Size (10 x 10 for example): ";
-
-        // This method is used to make sure ENTER can't be pressed without detection
-        std::string buffer;
-        std::getline(std::cin, buffer);
+        std::string buffer = inputPrompt("Size (10 x 10 for example)");
         if (std::cin.eof()) {
-            std::cout << RED << "EOF" << RESET << " has occurred" << std::endl;
+            error("EOF has occurred");
             return -1;
         }
         std::stringstream ss(buffer);
@@ -63,10 +55,10 @@ int IO::readSize(short &height, short &width) {
         char divider;
         ss >> m_height >> divider >> m_width;
         if (ss.fail() || ss.rdbuf()->in_avail() || (divider != 'x' && divider != 'X')) {
-            std::cout << RED << "Invalid input" << RESET << std::endl;
+            error("Invalid input", false);
             valid = false;
         } else if (m_height <= 0 || m_height > 20 || m_width <= 0 || m_width > 20 || m_width * m_height < 14) {
-            std::cout << RED << "Invalid size" << RESET << std::endl;
+            error("Invalid size", false);
             valid = false;
         }
     } while (!valid);
@@ -76,10 +68,7 @@ int IO::readSize(short &height, short &width) {
 }
 
 int IO::readInput(Word &word) const {
-    bool valid;
-    std::string input;
-    std::cout << "> ";
-    getline(std::cin, input);
+    std::string input = inputPrompt("");
     if (input == "exit" || std::cin.eof()) {
         return -1;
     }
@@ -87,17 +76,18 @@ int IO::readInput(Word &word) const {
         IO::instructions();
         return 1;
     }
-    valid = checkWordInput(input);
-    if(!valid){
-        return 1;
+    if(checkWordInput(input)){
+        word.setValues(input[0], input[1], input[3], input.substr(5));
+        return 0;
     }
-    word.setValues(input[0], input[1], input[3], input.substr(5));
-    return 0;
+    return 1;
 }
 
-void IO::error(const std::string &s) {
+void IO::error(const std::string &s, bool wait) {
     std::cout << RED << s << RESET << std::endl;
-    pressToContinue();
+    if(wait){
+        pressToContinue();
+    }
 }
 
 bool IO::checkWordInput(const std::string &input) const {
@@ -150,7 +140,7 @@ void IO::savedMessage(bool saved){
         std::cout << BLUE << "Board has been saved" << RESET << std::endl << std::endl;
     }
     else{
-        std::cout << RED << "Board wasn't saved due to lack of letters" << RESET << std::endl << std::endl;
+        error("Board wasn't saved due to lack of letters", false);
     }
 }
 
@@ -174,4 +164,14 @@ void IO::displayTitle(){
 void IO::pressToContinue() {
     std::cout << "\nPlease press any key to continue ...\n";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+std::string IO::inputPrompt(const std::string &message) {
+    std::string buffer;
+    std::cout << message << std::endl << std::endl << "> ";
+    getline(std::cin, buffer);
+    if(std::cin.eof()){
+        return "";
+    }
+    return buffer;
 }

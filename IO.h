@@ -79,7 +79,9 @@ private:
      * Output an error message
      * @param s
      */
-    static void error(const std::string &s);
+    static void error(const std::string &s, bool wait=true);
+
+    static std::string inputPrompt(const std::string &message);
 
     /**
      * Wait for user to press a key to continue execution
