@@ -121,7 +121,7 @@ bool Board::validateWord(const Word &word) {
     std::pair<char, char> end_pos{pos.first + (text.length()  - 1) * line_int,
                                   pos.second + (text.length()  - 1) * (1-line_int)};
 
-    if(end_pos.first >= m_height || end_pos.second >= m_width){
+    if(pos.first < 0 || pos.second < 0 || end_pos.first >= m_height || end_pos.second >= m_width){
         return false;
     }
 

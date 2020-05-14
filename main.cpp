@@ -8,12 +8,12 @@ int main() {
     IO io{};
 
     IO::displayTitle();
-    std::string filename = IO::readFileName();
+    std::string filename = io.readFileName();
     if(filename.empty()){
         return 1;
     }
     short height, width;
-    if(io.readSize(height, width) == -1){
+    if(io.readSize(height, width) <= 0){
         return 1;
     }
 
