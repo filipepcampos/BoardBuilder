@@ -10,7 +10,7 @@
 class IO{
 public:
     /**
-     * Display program title
+     * Display program title screen
      */
     static void displayTitle();
 
@@ -35,6 +35,11 @@ public:
      * @param s
      */
     static void suggestionMessage(const std::string &s);
+    /**
+     * Output two words suggestion after failed word search
+     * @param s1
+     * @param s2
+     */
     static void suggestionMessage(const std::string &s1, const std::string &s2);
 
     /**
@@ -47,22 +52,29 @@ public:
      * Read board size through reference
      * @param height
      * @param width
-     * @return 0 if read was successfull, -1 if EOF occurred
      */
-    static int readSize(short &height, short &width);
+    void readSize(short &height, short &width);
 
     /**
      * Read a word or special command from user
      * 'instructions' - this will display the instructions again
      * 'exit' - send signal to exit program
      * @param word
-     * @return -1 to exit program, 0 if a word was read, 1 if read was invalid
+     * @return -1 to exit program, 0 if a word was read, 1 if read was invalid / skip to next read
      */
-    static int readWordInput(Word &word);
+    int readWordInput(Word &word) const;
+
+    /*
+     * Thrown by read() when std::cin.eof() occurs after attempting to read
+     */
+    class CinEof : public std::exception{};
 private:
+    short m_height, m_width;
+
     /**
      * Output an error message
-     * @param s
+     * @param s - message
+     * @param wait - should wait for keypress to continue or not
      */
     static void error(const std::string &s, bool wait=true);
 
@@ -71,13 +83,29 @@ private:
      */
     static void pressToContinue();
 
+    /**
+     * Read a string from cin and convert it to type T using converter function
+     * @tparam T
+     * @param var
+     * @param convert - conversion function that converts std::string to type T, returning true if successful
+     * @return true if read was successful
+     */
     template <typename T>
-    static bool read(T &var, bool(*test)(const T &var), bool(*convert)(T &var, const std::string &str));
+    static bool read(T &var, bool (*convert)(T &var, const std::string &str));
 
-    static bool stringConverter(std::string &var, const std::string &str);
+    /**
+     * Used as a 'converter' for read when unaltered input line is needed
+     * Copy string from str to var
+     * @return true
+     */
+    static bool stringCopy(std::string &var, const std::string &str);
+
+    /**
+     * Convert a std::string in format "Height x Width" to a pair
+     */
+    static bool sizeConverter(std::pair<short, short> &size, const std::string &str);
 
     static bool testFileName(const std::string &name);
-    static bool sizeConverter(std::pair<short, short> &size, const std::string &str);
     static bool testSize(const std::pair<short, short> &size);
     static bool testWordInput(const std::string &input);
 };

@@ -5,13 +5,16 @@
 #include "IO.h"
 
 int main() {
+    IO io{};
     IO::displayTitle();
-    std::string filename = IO::readFileName();
-    if(filename.empty()){
-        return 1;
-    }
+
+    std::string filename;
     short height, width;
-    if(IO::readSize(height, width) <= 0){
+    try{
+        filename = IO::readFileName();
+        io.readSize(height, width);
+    } catch(const IO::CinEof &e){
+        std::cout << std::endl;
         return 1;
     }
 
@@ -22,8 +25,7 @@ int main() {
     while(!exit){
         b.print();
         Word word;
-        int status = IO::readWordInput(word);
-
+        int status = io.readWordInput(word);
         switch(status){
             case -1: exit = true; continue;
             case 1: continue;

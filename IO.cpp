@@ -1,6 +1,5 @@
 #include "IO.h"
 #include <iostream>
-#include <sstream>
 #include <limits>
 
 #define BLUE "\u001b[36m"
@@ -57,22 +56,17 @@ void IO::pressToContinue() {
 }
 
 template<typename T>
-bool IO::read(T &var, bool(*test)(const T &var), bool(*convert)(T &var, const std::string &str)) {
-    std::cout << "\n > ";
+bool IO::read(T &var, bool(*convert)(T &var, const std::string &str)) {
+    std::cout << "\n> ";
     std::string buffer;
     std::getline(std::cin, buffer);
-
-    if(std::cin.eof()){
-        var = T{};
-        return true;
+    if (std::cin.eof()) {
+        throw CinEof();
     }
-    if((*convert)(var, buffer)){
-        return test(var);
-    }
-    return false;
+    return (*convert)(var, buffer); // True if successful
 }
 
-bool IO::stringConverter(std::string &var, const std::string &str) {
+bool IO::stringCopy(std::string &var, const std::string &str) {
     var = str;
     return true;
 }
@@ -91,14 +85,12 @@ bool IO::sizeConverter(std::pair<short, short> &size, const std::string &str) {
 std::string IO::readFileName() {
     std::string file_name;
     while(true){
-        std::cout << "Board file name";
-        if(read(file_name, testFileName, stringConverter)){
+        std::cout << "\nBoard file name";
+        if(read(file_name, stringCopy) && testFileName(file_name)){
             break;
         }
     }
-    if(!file_name.empty()){
-        file_name.append(".txt");
-    }
+    file_name.append(".txt");
     return file_name;
 }
 bool IO::testFileName(const std::string &name){
@@ -119,19 +111,17 @@ bool IO::testFileName(const std::string &name){
 }
 
 // ---------------------- Size -------------------------------
-int IO::readSize(short &height, short &width) {
+void IO::readSize(short &height, short &width){
     std::pair<short, short> pos{};
     while(true){
-        std::cout << "Size (10 x 10 for example)";
-        if(read(pos, testSize, sizeConverter)){
+        std::cout << "\nSize (10 x 10 for example)";
+        if(read(pos, sizeConverter) && testSize(pos)){
             break;
         }
     }
-    height = pos.first;
-    width = pos.second;
-    return height;
+    height = pos.first; m_height = pos.first;
+    width = pos.second; m_width = pos.second;
 }
-
 bool IO::testSize(const std::pair<short, short> &size) {
     if(size.first <= 0 || size.first > 20 || size.second <= 0 || size.second > 20 || size.second * size.first < 14){
         error("Invalid size", false);
@@ -141,19 +131,26 @@ bool IO::testSize(const std::pair<short, short> &size) {
 }
 
 // -------------------------- Word input ----------------------------------
-int IO::readWordInput(Word &word) {
-    std::string raw_word;
-    if(read(raw_word, testWordInput, stringConverter)){
-        if (raw_word == "exit" || raw_word.empty()) {
+int IO::readWordInput(Word &word) const{
+    std::string str_word;
+    int successful;
+    try{
+        successful = read(str_word, stringCopy);
+    }  catch(const CinEof &e){
+        return -1; // If EOF happens send signal associated with "exit"
+    }
+    if(successful && testWordInput(str_word)){
+        if (str_word == "exit") {
             return -1;
         }
-        else if (raw_word == "instructions"){
+        else if (str_word == "instructions"){
             IO::instructions();
-            return 1;
+            return 1; // Skip to next word
         }
         else{
-            word.setValues(raw_word[0], raw_word[1], raw_word[3], raw_word.substr(5));
-            return 0;
+            word = Word{str_word[0], str_word[1], str_word[3], str_word.substr(5)};
+            std::pair<short, short> pos = word.getPosition();
+            return (pos.first >= 0 && pos.first < m_height && pos.second >= 0 && pos.second < m_width) ? 0 : 1;
         }
     }
     return 1;

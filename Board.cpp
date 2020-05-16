@@ -1,6 +1,5 @@
 #include <iostream>
 #include <algorithm>
-#include <sstream>
 #include <utility>
 #include "Board.h"
 #include "IO.h"
@@ -121,23 +120,32 @@ bool Board::validateWord(const Word &word) {
     std::pair<char, char> end_pos{pos.first + (text.length()  - 1) * line_int,
                                   pos.second + (text.length()  - 1) * (1-line_int)};
 
-    if(pos.first < 0 || pos.second < 0 || end_pos.first >= m_height || end_pos.second >= m_width){
+    if(pos.first < 0 || pos.second < 0 || end_pos.first >= m_height || end_pos.second >= m_width
+        || !validateEdges(pos, end_pos, line) || !validateEachTile(word.getText(), pos, line)){
         return false;
     }
+    return searchWord(text);
+}
 
-    // Check behind first letter and beyond last letter, if not empty the word isn't valid
+// Check behind first letter and beyond last letter, if not empty -> the word isn't valid
+bool Board::validateEdges(const std::pair<short, short> &pos, const std::pair<short, short> &end_pos, orientation line) {
     detail::Tile *tile = getPosition(pos, -1, line);
     if(tile){
-        if(tile->letter != ' ') {return false;}
+        if(tile->letter != ' ') {
+            return false;
+        }
     }
     tile = getPosition(end_pos, 1, line);
     if(tile){
-        if(tile->letter != ' '){ return false;}
+        if(tile->letter != ' '){
+            return false;
+        }
     }
-
-    // Validate each tile the word will occupy
+    return true;
+}
+bool Board::validateEachTile(const std::string &text, const std::pair<short, short> &pos, orientation line) {
     for(int i = 0; i < text.length(); ++i){
-        tile = getPosition(pos, i, line);
+        detail::Tile *tile = getPosition(pos, i, line);
         orientation opposite_line = line == V ? H : V;
         if((tile->letter != ' ' && tile->letter != text[i])
            || (tile->reserved[line] && !tile->occupied[opposite_line]) // Can only be placed on reserved tile if it's occupied by other line
@@ -145,7 +153,7 @@ bool Board::validateWord(const Word &word) {
             return false;
         }
     }
-    return searchWord(text);
+    return true;
 }
 
 detail::Tile* Board::getPosition(const std::pair<short, short> &pos, int n, orientation line) const{
@@ -166,12 +174,13 @@ bool Board::searchWord(std::string &text) {
                             // that's immediately before and after text
     int i = 0;
     while(getline(m_words_file, buffers[i]) && !buffers[i].empty()){
-        std::stringstream{buffers[i]} >> buffers[i]; // Removes /r on Windows
+        std::stringstream{buffers[i]} >> buffers[i]; // This fixes a issue with /r at end of line in Windows
         int compare_val = text.compare(buffers[i]);
         if(compare_val == 0){
             return true;
         }
-        if(compare_val < 0){
+        if(compare_val < 0){ // Since WORDS is sorted, if target word < current word
+                            // certainly the word doesn't exist in the file
             IO::suggestionMessage(buffers[0], buffers[1]);
             return false;
         }
