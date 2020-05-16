@@ -1,7 +1,7 @@
 #pragma once
 #include <fstream>
 #include <string>
-#include <map>
+#include <set>
 #include <vector>
 #include "Word.h"
 
@@ -73,10 +73,17 @@ private:
     detail::Tile **m_board;
     const short m_width, m_height;
     const std::string m_words_file_name = "WORDS.TXT";
-    const std::string m_file_name;
+    const std::string m_file_name; // Board file name
 
-    std::vector<Word> m_word_vector;
-    std::ifstream m_words_file;
+    /**
+     * All words in WORDS file will be kept here
+     */
+    std::set<std::string> m_words_set;
+
+    /*
+     * All words that were added to the board will be kept here
+     */
+    std::vector<Word> m_board_words;
 
     /**
      * Get nth position along a line starting in a given position
@@ -123,11 +130,21 @@ private:
     bool validateEachTile(const std::string &text, const std::pair<short, short> &pos, orientation line);
 
     /**
+     * Read all words from WORDS file into m_words_set
+     */
+    void readWordsFile();
+
+    /**
      * Check is a given word is in the words_file
      * If a text isn't present in WORDS file, then closest words will be suggested
      * @param (std::string) word
      * @return (bool)
      */
-    bool searchWord(std::string &text);
+    bool searchWord(std::string text) const;
+
+    /*
+     * Suggest words nearest to text
+     */
+    void suggestWords(const std::string &text) const;
 };
 

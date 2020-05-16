@@ -5,12 +5,13 @@
 #include "IO.h"
 
 Board::Board(short height, short width, std::string file_name)
-    : m_height(height), m_width(width), m_file_name(std::move(file_name)), m_words_file(m_words_file_name)
+    : m_height(height), m_width(width), m_file_name(std::move(file_name))
 {
     m_board = new detail::Tile* [height];
     for(int i = 0; i < height; ++i){
         m_board[i] = new detail::Tile[width];
     }
+    readWordsFile();
 }
 
 Board::~Board(){
@@ -34,12 +35,11 @@ bool Board::save(){
         std::ofstream file;
         file.open(m_file_name);
         file << m_height << " x " << m_width << std::endl;
-        for(const auto &w : m_word_vector){
+        for(const auto &w : m_board_words){
             file << w;
         }
         print(file);
         file.close();
-        m_words_file.close();
         return true;
     }
     return false;
@@ -86,7 +86,7 @@ bool Board::addWord(Word &word) {
             tile->reserved[line] = true;
             reserveAdjacent(pos, i, line);
         }
-        m_word_vector.push_back(word);
+        m_board_words.push_back(word);
         return true;
     }
     return false;
@@ -166,27 +166,32 @@ detail::Tile* Board::getPosition(const std::pair<short, short> &pos, int n, orie
     return &m_board[v][h];
 }
 
-bool Board::searchWord(std::string &text) {
-    m_words_file.seekg(0);
-    std::transform(text.begin(), text.end(), text.begin(), ::tolower);
-
-    std::string buffers[2]; // Two buffer strings are used to keep the last word read, allowing to suggest word
-                            // that's immediately before and after text
-    int i = 0;
-    while(getline(m_words_file, buffers[i]) && !buffers[i].empty()){
-        std::stringstream{buffers[i]} >> buffers[i]; // This fixes a issue with /r at end of line in Windows
-        int compare_val = text.compare(buffers[i]);
-        if(compare_val == 0){
-            return true;
-        }
-        if(compare_val < 0){ // Since WORDS is sorted, if target word < current word
-                            // certainly the word doesn't exist in the file
-            IO::suggestionMessage(buffers[0], buffers[1]);
-            return false;
-        }
-        i = ++i % 2;
+void Board::readWordsFile(){
+    std::ifstream words_file{m_words_file_name};
+    std::string buffer;
+    while(getline(words_file, buffer) && !buffer.empty()){
+        std::stringstream{buffer} >> buffer; // Solves problem of /r at end of lines
+        m_words_set.insert(buffer);
     }
-    m_words_file.clear(); // If code reached this point then EOF most likely has occurred.
-    IO::suggestionMessage(buffers[++i % 2]);
-    return false;
+    words_file.close();
+}
+
+bool Board::searchWord(std::string text) const{
+    std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+    if(m_words_set.find(text) == m_words_set.end()){
+        suggestWords(text);
+        return false;
+    }
+    return true;
+}
+
+void Board::suggestWords(const std::string &text) const {
+    auto it1 = m_words_set.upper_bound(text);
+    std::string suggest1 = it1 != m_words_set.end() ? *it1 : ""; // Get word immediately after text
+    std::string suggest2{};
+    if(it1 != m_words_set.begin()) { // Avoid accessing wrong memory
+        auto it2 = std::prev(it1);
+        suggest2 = it2 != m_words_set.begin() ? *it2 : "";
+    }
+    IO::suggestionMessage(suggest2, suggest1);
 }

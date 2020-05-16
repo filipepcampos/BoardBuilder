@@ -34,10 +34,12 @@ void IO::savedMessage(bool saved){
 }
 
 void IO::suggestionMessage(const std::string &s1, const std::string &s2){
-    if(!s2.empty()){
+    if(!s1.empty() && !s2.empty()){
         std::cout << "Suggestion: " << BLUE << s1 << RESET << " or " << BLUE << s2 << RESET << std::endl;
-    }else{
-        std::cout << "Suggestion: " << BLUE << s1 << RESET << std::endl;
+    }
+    else {
+        std::string word = s1.empty() ? s2 : s1; // At least one isn't empty
+        std::cout << "Suggestion: " << BLUE << word << RESET << std::endl;
     }
 }
 
@@ -134,7 +136,7 @@ bool IO::testSize(const std::pair<short, short> &size) {
 // -------------------------- Word input ----------------------------------
 int IO::readWordInput(Word &word) const{
     std::string str_word;
-    int successful;
+    bool successful;
     try{
         successful = read(str_word, stringCopy);
     }  catch(const CinEof &e){
