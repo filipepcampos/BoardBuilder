@@ -186,12 +186,9 @@ bool Board::searchWord(std::string text) const{
 }
 
 void Board::suggestWords(const std::string &text) const {
-    auto it1 = m_words_set.upper_bound(text);
-    std::string suggest1 = it1 != m_words_set.end() ? *it1 : ""; // Get word immediately after text
-    std::string suggest2{};
-    if(it1 != m_words_set.begin()) { // Avoid accessing wrong memory
-        auto it2 = std::prev(it1);
-        suggest2 = it2 != m_words_set.begin() ? *it2 : "";
-    }
+    auto it = m_words_set.upper_bound(text); // Can range from  set.begin() (first word) to set.end() (beyond last word)
+    // it points to first word > text (or set.end()), std::prev(it) will point to last word < text
+    std::string suggest1 = it != m_words_set.end() ? *it : ""; // Get word immediately after text
+    std::string suggest2 = it != m_words_set.begin() ? *(std::prev(it)) : ""; // Get word immediately before
     IO::suggestionMessage(suggest2, suggest1);
 }
