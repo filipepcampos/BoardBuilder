@@ -31,16 +31,11 @@ public:
     static void savedMessage(bool saved);
 
     /**
-     * Output word suggestions after failed word search
-     * @param s
-     */
-    static void suggestionMessage(const std::string &s);
-    /**
-     * Output two words suggestion after failed word search
+     * Output words suggestion after failed word search
      * @param s1
      * @param s2
      */
-    static void suggestionMessage(const std::string &s1, const std::string &s2);
+    static void suggestionMessage(const std::string &s1, const std::string &s2 = "");
 
     /**
      * Read a file name

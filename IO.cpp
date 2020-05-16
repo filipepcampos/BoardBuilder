@@ -34,10 +34,11 @@ void IO::savedMessage(bool saved){
 }
 
 void IO::suggestionMessage(const std::string &s1, const std::string &s2){
-    std::cout << "Suggestion: " << BLUE << s1 << RESET << " or " << BLUE << s2 << RESET << std::endl;
-}
-void IO::suggestionMessage(const std::string &s){
-    std::cout << "Suggestion: " << BLUE << s << RESET << std::endl;
+    if(!s2.empty()){
+        std::cout << "Suggestion: " << BLUE << s1 << RESET << " or " << BLUE << s2 << RESET << std::endl;
+    }else{
+        std::cout << "Suggestion: " << BLUE << s1 << RESET << std::endl;
+    }
 }
 
 void IO::displayTitle(){
