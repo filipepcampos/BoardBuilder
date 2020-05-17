@@ -110,14 +110,14 @@ private:
     bool validateWord(const Word &word);
 
     /**
-     * Check if edges of the word are empty, the edges are the positions
+     * Occupy the ends of a word, the ends are the positions
      * before the first letter and beyond the last letter
      * @param pos - Position of first letter
      * @param end_pos - Position of last letter
      * @param line - Orientation of the word
      * @return
      */
-    bool validateEdges(const std::pair<short, short> &pos, const std::pair<short, short> &end_pos, orientation line);
+    void occupyEnds(const std::pair<short, short> &pos, const std::pair<short, short> &end_pos, orientation line);
 
     /**
      * Validate each tile of a word, making sure the letter matches up, there isn't any occupied position or
