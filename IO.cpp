@@ -87,41 +87,33 @@ bool IO::sizeConverter(std::pair<short, short> &size, const std::string &str) {
 // -------------------------- File name ----------------------------
 std::string IO::readFileName() {
     std::string file_name;
-    while(true){
+    do{
         std::cout << "\nBoard file name";
-        if(read(file_name, stringCopy) && testFileName(file_name)){
-            break;
-        }
-    }
+    } while( !(read(file_name, stringCopy) && testFileName(file_name)) );
     file_name.append(".txt");
     return file_name;
 }
 bool IO::testFileName(const std::string &name){
-    if(!name.empty()){
-        if (name == "WORDS") {
-            error("Can't use reserved name as file name", false);
+    if (name == "WORDS") {
+        error("Can't use reserved name as file name", false);
+        return false;
+    }
+    for (auto c : name) {
+        if (!isalnum(c)) {
+            error("File name must contain only alphanumeric characters without whitespace", false);
             return false;
         }
-        for (auto c : name) {
-            if (!isalnum(c)) {
-                error("File name must contain only alphanumeric characters without whitespace", false);
-                return false;
-            }
-        }
-        return true;
     }
-    return false;
+    return !name.empty();
 }
 
 // ---------------------- Size -------------------------------
 void IO::readSize(short &height, short &width){
     std::pair<short, short> pos{};
-    while(true){
+    do{
         std::cout << "\nSize (10 x 10 for example)";
-        if(read(pos, sizeConverter) && testSize(pos)){
-            break;
-        }
-    }
+    } while(!(read(pos, sizeConverter) && testSize(pos)));
+
     height = pos.first; m_height = pos.first;
     width = pos.second; m_width = pos.second;
 }
