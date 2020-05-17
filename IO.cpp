@@ -37,7 +37,7 @@ void IO::suggestionMessage(const std::string &s1, const std::string &s2){
     if(!s1.empty() && !s2.empty()){
         std::cout << "Suggestion: " << BLUE << s1 << RESET << " or " << BLUE << s2 << RESET << std::endl;
     }
-    else {
+    else if(!s1.empty() || !s2.empty()){
         std::string word = s1.empty() ? s2 : s1; // At least one isn't empty
         std::cout << "Suggestion: " << BLUE << word << RESET << std::endl;
     }
